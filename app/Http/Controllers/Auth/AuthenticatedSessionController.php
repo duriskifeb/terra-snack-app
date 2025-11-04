@@ -3,46 +3,45 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\View\View;
 
-class RegisteredUserController extends Controller
+class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the registration view.
+     * Tampilkan form login.
      */
-    public function create(): View
+    public function create()
     {
-        return view('auth.register');
+        return view('auth.login');
     }
 
     /**
-     * Handle an incoming registration request.
+     * Proses login user.
      */
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:users'],
-            'phone' => ['required', 'string', 'max:20'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+    public function store(Request $request)
+{
+    $credentials = $request->validate([
+        'name' => ['required', 'string'],
+        'password' => ['required', 'string'],
+    ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-        ]);
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return redirect('/dashboard');
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return redirect()->intended('/dashboard')->with('success', 'Login berhasil!');
     }
+
+    // Kalau username atau password salah
+    return back()->with('error', 'Username atau password salah!')->withInput();
+}
+
+public function destroy(Request $request)
+{
+    Auth::logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/login')->with('success', 'Logout berhasil!');
+}
 }

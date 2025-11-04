@@ -1,13 +1,15 @@
 <x-guest-layout>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+
     <!-- Logo -->
     <div class="text-center mb-6">
         <img src="{{ asset('images/logoTerraSnack.svg') }}" alt="Terra Snack Logo" class="mx-auto w-24 mb-2">
         <h1 class="text-2xl font-bold text-amber-700 font-inter">Login Terra Snack</h1>
-        <p class="text-sm text-gray-500">Nikmati camilan lezat dengan akunmu</p>
+        <p class="text-sm text-gray-500">Nikmati camilan lezat dengan akunmu 🍪</p>
     </div>
 
+    <!-- Form Login -->
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
@@ -22,9 +24,9 @@
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
             <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+                          type="password"
+                          name="password"
+                          required autocomplete="current-password" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
@@ -36,9 +38,11 @@
             </label>
         </div>
 
+        <!-- Tombol Login -->
         <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                   href="{{ route('password.request') }}">
                     {{ __('Forgot your password?') }}
                 </a>
             @endif
@@ -48,4 +52,32 @@
             </x-primary-button>
         </div>
     </form>
+
+    <!-- ✅ SweetAlert Library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- ✅ SweetAlert Pop-up -->
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            })
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Gagal!',
+                text: '{{ session('error') }}',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Coba Lagi'
+            })
+        </script>
+    @endif
 </x-guest-layout>
