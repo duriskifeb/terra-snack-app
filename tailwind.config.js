@@ -14,6 +14,12 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            maxWidth: {
+                'content': '600px',  
+            },
+            padding: {
+                'mobile-gutter': '20px',
+            }
         },
     },
     plugins: [],
