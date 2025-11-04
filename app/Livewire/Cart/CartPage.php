@@ -45,6 +45,7 @@ class CartPage extends Component
             $this->cart->load(['items.product', 'items.optionValues']);
         }
     }
+    
     public function calculateTotals()
     {
         if (!$this->cart || !$this->cart->relationLoaded('items')) {
