@@ -18,9 +18,13 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Gift;
 
     protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $navigationLabel = 'Manajemen Produk';
+    protected static ?string $modelLabel = 'Produk';
+
+    protected static ?string $pluralModelLabel = 'Daftar Produk';
 
     public static function form(Schema $schema): Schema
     {

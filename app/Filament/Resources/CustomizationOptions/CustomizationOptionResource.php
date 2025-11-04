@@ -18,7 +18,12 @@ class CustomizationOptionResource extends Resource
 {
     protected static ?string $model = CustomizationOption::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    // protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAdjustmentsHorizontal;
+    // protected static ?string $navigationGroup = 'Manajemen Produk'; 
+    protected static ?string $navigationLabel = 'Opsi Kustomisasi';
+    protected static ?string $modelLabel = 'Opsi Kustomisasi';
+    protected static ?string $pluralModelLabel = 'Daftar Opsi Kustomisasi';
 
     public static function form(Schema $schema): Schema
     {
