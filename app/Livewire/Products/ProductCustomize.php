@@ -9,7 +9,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Log;
 
-#[Layout('components.layouts.customer')] 
+#[Layout('components.layouts.customer')]
 class ProductCustomize extends Component
 {
     public Product $product;
@@ -24,17 +24,17 @@ class ProductCustomize extends Component
     {
         $this->product = $product;
         $this->product->load('customizationOptions.optionValues');
-        
+
         $this->customizationGroups = $this->product->customizationOptions;
 
         foreach ($this->customizationGroups as $group) {
             $this->selectedOptions[$group->id] = [];
         }
-        
+
         $this->calculatePrice();
     }
 
-      public function updatedSelectedOptions()
+    public function updatedSelectedOptions()
     {
         $this->calculatePrice();
     }
@@ -60,7 +60,7 @@ class ProductCustomize extends Component
                 $allSelectedIds[] = $optionIds;
             }
         }
-        
+
         if (!empty($allSelectedIds)) {
             $optionsPrice = OptionValue::whereIn('id', $allSelectedIds)->sum('price_modifier');
         }
@@ -84,14 +84,14 @@ class ProductCustomize extends Component
 
     public function addToCart()
     {
-        $user = User::find(1); 
+        $user = User::find(1);
         if (!$user) {
             abort(500, 'Test user not found.');
         }
         $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
 
         $selectedOptionIds = [];
-         foreach ($this->selectedOptions as $groupId => $optionIds) {
+        foreach ($this->selectedOptions as $groupId => $optionIds) {
             if (is_array($optionIds)) {
                 $selectedOptionIds = array_merge($selectedOptionIds, $optionIds);
             } elseif (!is_null($optionIds)) {
@@ -106,7 +106,7 @@ class ProductCustomize extends Component
 
         $existingItem = $cart->items()
             ->where('product_id', $this->product->id)
-            ->with('optionValues:id') 
+            ->with('optionValues:id')
             ->get()
             ->first(function ($item) use ($selectedOptionIds) {
                 $itemOptionIds = $item->optionValues->pluck('id')->all();
@@ -123,20 +123,27 @@ class ProductCustomize extends Component
             } else {
                 $newItem = $cart->items()->create([
                     'product_id' => $this->product->id,
-                    'quantity'   => $this->quantity,
+                    'quantity' => $this->quantity,
                     'unit_price' => $unitPrice,
-                    'subtotal'   => $subtotal,
+                    'subtotal' => $subtotal,
                 ]);
-                
+
                 $newItem->optionValues()->attach($selectedOptionIds);
             }
-            
+
             return redirect()->route('cart');
 
         } catch (\Exception $e) {
             Log::error('Error adding custom item to cart: ' . $e->getMessage());
             $this->dispatch('show-error', 'Gagal menambahkan barang.');
         }
+    }
+
+    public function resetTopping($groupId)
+    {
+        $this->selectedOptions[$groupId] = null;
+
+        $this->calculatePrice();
     }
 
     public function render()

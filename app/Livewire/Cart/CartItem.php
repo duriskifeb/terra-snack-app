@@ -5,15 +5,15 @@ namespace App\Livewire\Cart;
 use Livewire\Component;
 use Log;
 use Livewire\Attributes\Layout;
+use App\Models\CartItem as CartItemModel;
 
-#[Layout('components.layouts.customer')] 
+#[Layout('components.layouts.customer')]
 class CartItem extends Component
 {
-    public CartItem $cartItem;
-
+    public CartItemModel $cartItem;
     public int $quantity;
 
-    public function mount(CartItem $cartItem)
+    public function mount(CartItemModel $cartItem)
     {
         $this->cartItem = $cartItem;
         $this->quantity = $cartItem->quantity;
@@ -23,10 +23,10 @@ class CartItem extends Component
     {
         $this->validate(['quantity' => 'required|integer|min:1']);
         try {
-            $basePrice = $this->item->unit_price;
-            $optionsPrice = $this->item->optionValues->sum('price_modifier');
+            $basePrice = $this->cartItem->unit_price;
+            $optionsPrice = $this->cartItem->optionValues->sum('price_modifier');
             $newSubtotal = ($basePrice + $optionsPrice) * $this->quantity;
-            $this->item->update([
+            $this->cartItem->update([
                 'quantity' => $this->quantity,
                 'subtotal' => $newSubtotal,
             ]);
@@ -54,10 +54,9 @@ class CartItem extends Component
     public function removeItem()
     {
         try {
-            $this->item->delete();
+            $this->cartItem->delete();
             $this->dispatch('cartUpdated');
             $this->dispatch('show-success', 'Barang dihapus dari keranjang.');
-
         } catch (\Exception $e) {
             Log::error('Error removing cart item: ' . $e->getMessage());
             $this->dispatch('show-error', 'Gagal menghapus barang.');
@@ -66,7 +65,7 @@ class CartItem extends Component
 
     public function render()
     {
-        $this->item->loadMissing(['product', 'optionValues']);
+        $this->cartItem->loadMissing(['product', 'optionValues']);
         return view('livewire.cart.cart-item');
     }
 }
