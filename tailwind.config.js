@@ -15,7 +15,7 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             maxWidth: {
-                'content': '600px',  
+                'content': '500px',  
             },
             padding: {
                 'mobile-gutter': '20px',

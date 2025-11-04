@@ -16,9 +16,7 @@
     <x-navbar.navbar-customer />
 
     <main class="max-w-content mx-auto px-mobile-gutter min-h-screen">
-        {{-- @include('livewire.cart.cart-page') --}}
         {{ $slot }}
-
     </main>
 
     @livewireScripts
