@@ -28,11 +28,11 @@ class OrderForm
                     ->numeric(),
                 Select::make('status')
                     ->options([
-            'pending' => 'Pending',
-            'processing' => 'Processing',
-            'completed' => 'Completed',
-            'cancelled' => 'Cancelled',
-        ])
+                        'pending' => 'Pending',
+                        'processing' => 'Processing',
+                        'completed' => 'Completed',
+                        'cancelled' => 'Cancelled',
+                    ])
                     ->default('pending')
                     ->required(),
                 TextInput::make('gateway_ref')
@@ -42,12 +42,12 @@ class OrderForm
                     ->default(null),
                 Select::make('payment_status')
                     ->options([
-            'unpaid' => 'Unpaid',
-            'pending_payment' => 'Pending payment',
-            'paid' => 'Paid',
-            'expired' => 'Expired',
-            'failed' => 'Failed',
-        ])
+                        'unpaid' => 'Unpaid',
+                        'pending_payment' => 'Pending payment',
+                        'paid' => 'Paid',
+                        'expired' => 'Expired',
+                        'failed' => 'Failed',
+                    ])
                     ->default('unpaid')
                     ->required(),
                 TextInput::make('payment_method')
