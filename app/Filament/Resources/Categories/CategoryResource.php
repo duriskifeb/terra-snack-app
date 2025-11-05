@@ -15,6 +15,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class CategoryResource extends Resource
 {
@@ -27,9 +28,16 @@ class CategoryResource extends Resource
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->live(onBlur: true) 
+                    ->afterStateUpdated(function ($state, $set) {
+                        if (!empty($state)) {
+                            $set('slug', Str::slug($state));
+                        }
+                    }),
                 TextInput::make('slug')
-                    ->required(),
+                    ->required()
+                    ->hint('Slug akan terisi otomatis dari nama kategori'),
             ]);
     }
 

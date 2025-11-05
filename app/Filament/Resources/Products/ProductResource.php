@@ -19,6 +19,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class ProductResource extends Resource
 {
@@ -34,9 +35,16 @@ class ProductResource extends Resource
                     ->relationship('category', 'name')
                     ->required(),
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->live(onBlur: true) 
+                    ->afterStateUpdated(function ($state, $set) {
+                        if (!empty($state)) {
+                            $set('slug', Str::slug($state));
+                        }
+                    }),
                 TextInput::make('slug')
-                    ->required(),
+                    ->required()
+                    ->hint('Slug akan terisi otomatis dari nama produk'),
                 TextInput::make('price')
                     ->required()
                     ->numeric()
