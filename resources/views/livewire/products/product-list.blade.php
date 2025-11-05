@@ -5,7 +5,7 @@
                 <button wire:click="filterByCategory({{ $category->id }})" class=" 
                                         flex items-center gap-2  text-lg font-semibold transition-colors
                                         {{ $activeCategoryId == $category->id
-                    ? 'text-[#E13220]'
+                    ? 'text-[#E13220] border-b-2 border-[#E13220]'
                     : 'text-[#F8B418] hover:text-[#DFA113]' 
                                         }}
                                     ">

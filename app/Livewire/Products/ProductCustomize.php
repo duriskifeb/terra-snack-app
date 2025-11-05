@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Products;
 
+use App\Models\CartItem; // <-- Added this
 use App\Models\OptionValue;
 use App\Models\Product;
 use App\Models\User;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url; // <-- Added this
 use Livewire\Component;
 use Log;
 
@@ -17,21 +19,59 @@ class ProductCustomize extends Component
     public array $selectedOptions = [];
 
     public int $quantity = 1;
-    public string $notes = '';
+    public string $notes = ''; 
     public float $currentTotalPrice = 0.0;
+
+    #[Url] 
+    public ?int $cartItemId = null;
+
+    public ?CartItem $cartItem = null;
 
     public function mount(Product $product)
     {
         $this->product = $product;
         $this->product->load('customizationOptions.optionValues');
-
         $this->customizationGroups = $this->product->customizationOptions;
 
-        foreach ($this->customizationGroups as $group) {
-            $this->selectedOptions[$group->id] = [];
+        if ($this->cartItemId) {
+            $this->cartItem = CartItem::with('optionValues')->find($this->cartItemId);
+            
+            if ($this->cartItem && $this->cartItem->product_id === $this->product->id) {
+                $this->quantity = $this->cartItem->quantity;
+                
+                foreach ($this->customizationGroups as $group) {
+                    $selectedIdsInGroup = $this->cartItem->optionValues
+                        ->where('customization_option_id', $group->id)
+                        ->pluck('id')
+                        ->all();
+
+                    if ($group->type === 'radio') {
+                        $this->selectedOptions[$group->id] = $selectedIdsInGroup[0] ?? null;
+                    } else {
+                        $this->selectedOptions[$group->id] = $selectedIdsInGroup;
+                    }
+                }
+            } else {
+                $this->cartItemId = null;
+                $this->cartItem = null;
+                $this->initializeSelectedOptions();
+            }
+        } else {
+            $this->initializeSelectedOptions();
         }
 
         $this->calculatePrice();
+    }
+
+    public function initializeSelectedOptions()
+    {
+        foreach ($this->customizationGroups as $group) {
+            if ($group->type === 'radio') {
+                $this->selectedOptions[$group->id] = null; 
+            } else {
+                $this->selectedOptions[$group->id] = []; 
+            }
+        }
     }
 
     public function updatedSelectedOptions()
@@ -82,9 +122,9 @@ class ProductCustomize extends Component
         }
     }
 
-    public function addToCart()
+    public function saveToCart()
     {
-        $user = User::find(1);
+        $user = User::find(1); 
         if (!$user) {
             abort(500, 'Test user not found.');
         }
@@ -104,45 +144,62 @@ class ProductCustomize extends Component
         $unitPrice = $this->product->price + $optionsPrice;
         $subtotal = $unitPrice * $this->quantity;
 
-        $existingItem = $cart->items()
-            ->where('product_id', $this->product->id)
-            ->with('optionValues:id')
-            ->get()
-            ->first(function ($item) use ($selectedOptionIds) {
-                $itemOptionIds = $item->optionValues->pluck('id')->all();
-                sort($itemOptionIds);
-                return $itemOptionIds === $selectedOptionIds;
-            });
-
         try {
-            if ($existingItem) {
-                $existingItem->increment('quantity', $this->quantity);
-                $newSubtotal = $existingItem->quantity * $unitPrice;
-                $existingItem->update(['subtotal' => $newSubtotal]);
+            if ($this->cartItem) {
+                $this->cartItem->update([
+                    'quantity'   => $this->quantity,
+                    'unit_price' => $unitPrice,
+                    'subtotal'   => $subtotal,
+                ]);
+                
+                $this->cartItem->optionValues()->sync($selectedOptionIds);
 
             } else {
-                $newItem = $cart->items()->create([
-                    'product_id' => $this->product->id,
-                    'quantity' => $this->quantity,
-                    'unit_price' => $unitPrice,
-                    'subtotal' => $subtotal,
-                ]);
+                $existingItem = $cart->items()
+                    ->where('product_id', $this->product->id)
+                    ->with('optionValues:id')
+                    ->get()
+                    ->first(function ($item) use ($selectedOptionIds) {
+                        $itemOptionIds = $item->optionValues->pluck('id')->all();
+                        sort($itemOptionIds);
+                        return $itemOptionIds === $selectedOptionIds;
+                    });
 
-                $newItem->optionValues()->attach($selectedOptionIds);
+                if ($existingItem) {
+                    $newQuantity = $existingItem->quantity + $this->quantity;
+                    $newSubtotal = $unitPrice * $newQuantity;
+                    $existingItem->update([
+                        'quantity' => $newQuantity,
+                        'subtotal' => $newSubtotal,
+                    ]);
+                } else {
+                    $newItem = $cart->items()->create([
+                        'product_id' => $this->product->id,
+                        'quantity'   => $this->quantity,
+                        'unit_price' => $unitPrice,
+                        'subtotal'   => $subtotal,
+                    ]);
+                    
+                    $newItem->optionValues()->attach($selectedOptionIds);
+                }
             }
-
+            
             return redirect()->route('cart');
 
         } catch (\Exception $e) {
-            Log::error('Error adding custom item to cart: ' . $e->getMessage());
-            $this->dispatch('show-error', 'Gagal menambahkan barang.');
+            Log::error('Error saving item to cart: ' . $e->getMessage());
+            $this->dispatch('show-error', 'Gagal menyimpan barang.');
         }
     }
 
     public function resetTopping($groupId)
     {
-        $this->selectedOptions[$groupId] = null;
-
+        $group = $this->customizationGroups->firstWhere('id', $groupId);
+        if ($group && $group->type === 'radio') {
+            $this->selectedOptions[$groupId] = null;
+        } else {
+            $this->selectedOptions[$groupId] = [];
+        }
         $this->calculatePrice();
     }
 
@@ -151,3 +208,4 @@ class ProductCustomize extends Component
         return view('livewire.products.product-customize');
     }
 }
+

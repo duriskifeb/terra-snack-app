@@ -73,15 +73,15 @@
         </div>
     </div>
 
-    <div class="fixed p-4 bottom-0 max-w-content mx-auto px-mobile-gutter left-0 right-0 w-full bg-white border-t-4 border-[#E13220] rounded-t-2xl shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+    <div class="fixed  py-10 px-mobile-gutter p-4 bottom-0 max-w-content mx-auto  left-0 right-0 w-full bg-white border-t-4 border-[#E13220] rounded-t-2xl shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
         <div class="flex justify-between items-center mb-3">
-            <span class="text-lg font-semibold">Total Pembayaran</span>
-            <span class="text-2xl font-bold text-red-600">
+            <span class="text-sm font-semibold">Total Pembayaran</span>
+            <span class="text-sm font-bold text-red-600">
                 Rp {{ number_format($currentTotalPrice, 0, ',', '.') }}
             </span>
         </div>
-        <button wire:click="addToCart" wire:loading.attr="disabled"
-            class="w-full bg-red-600 text-white text-lg font-bold py-3 rounded-lg hover:bg-red-700 transition-colors">
+        <button wire:click="saveToCart" wire:loading.attr="disabled"
+            class="w-full bg-red-600 text-white text-sm font-bold py-2 rounded-lg hover:bg-red-700 transition-colors">
             Tambahkan ke keranjang
         </button>
     </div>

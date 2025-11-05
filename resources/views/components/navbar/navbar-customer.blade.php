@@ -33,7 +33,8 @@
 
             <ul class="flex flex-col gap-6 text-lg font-medium text-gray-700">
                 <li>
-                    <a href="{{ route('products.list')  }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
+                    <a href="{{ route('products.list')  }}"
+                        class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
                         <i class="fa-solid fa-burger text-[#E13220] w-6 text-center"></i>
                         {{-- <i class="fa-solid fa-cart-shopping text-[#E13220] w-6 text-center"></i> --}}
                         <span>Products</span>
@@ -60,7 +61,7 @@
 
                 <li class="mt-8 border-t pt-6">
                     <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
-                        <i class="fa-solid fa-right-from-bracket text-[#E1E13220] w-6 text-center"></i>
+                        <i class="fa-solid fa-arrow-right-from-bracket text-[#E13220] w-6 text-center"></i>
                         <span>Keluar</span>
                     </a>
                 </li>
