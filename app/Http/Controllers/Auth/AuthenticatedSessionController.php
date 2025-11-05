@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Tampilkan form login.
+     * Tampilkan halaman login
      */
     public function create()
     {
@@ -17,31 +17,38 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Proses login user.
+     * Proses login
      */
     public function store(Request $request)
-{
-    $credentials = $request->validate([
-        'name' => ['required', 'string'],
-        'password' => ['required', 'string'],
-    ]);
+    {
+        // Validasi input
+        $credentials = $request->validate([
+            'name' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect()->intended('/dashboard')->with('success', 'Login berhasil!');
+        // Coba login
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            // Jika sukses login
+            return redirect()->intended('/dashboard')->with('success', 'Login berhasil! Selamat datang kembali 👋');
+        }
+
+        // Jika gagal login → kirim pesan error ke SweetAlert
+        return back()->with('error', 'Masukkan Username dan Password anda dengan benar!');
     }
 
-    // Kalau username atau password salah
-    return back()->with('error', 'Username atau password salah!')->withInput();
-}
+    /**
+     * Logout
+     */
+    public function destroy(Request $request)
+    {
+        Auth::guard('web')->logout();
 
-public function destroy(Request $request)
-{
-    Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    return redirect('/login')->with('success', 'Logout berhasil!');
-}
+        return redirect('/login')->with('success', 'Anda telah logout!');
+    }
 }

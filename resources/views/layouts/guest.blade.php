@@ -27,20 +27,35 @@
             <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
                 {{ $slot }}
             </div>
+        </div> <!-- Penutup div min-h-screen -->
 
+        <!-- SweetAlert Script -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         @if (session('success'))
-            <script>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    timer: 2000,
-                    showConfirmButton: false
-                })
-            </script>
+        <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            timer: 2500,
+            showConfirmButton: false
+        })
+        </script>
         @endif
-        </div>
+
+        @if (session('error'))
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops... Gagal!',
+            text: '{{ session('error') }}',
+            timer: 3000,
+            showConfirmButton: false
+        })
+        </script>
+        @endif
+
+
     </body>
 </html>
