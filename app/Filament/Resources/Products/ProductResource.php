@@ -40,7 +40,7 @@ class ProductResource extends Resource
                 TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('Rp.'),
                 Textarea::make('description')
                     ->default(null)
                     ->columnSpanFull(),
@@ -60,7 +60,7 @@ class ProductResource extends Resource
                 TextColumn::make('slug')
                     ->searchable(),
                 TextColumn::make('price')
-                    ->money()
+                    ->money('IDR')
                     ->sortable(),
                 ImageColumn::make('image_url'),
                 TextColumn::make('created_at')
