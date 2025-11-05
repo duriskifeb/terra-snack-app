@@ -1,39 +1,15 @@
 <div x-data="{
         snapToken: @entangle('snapToken'),
         initSnap() {
-            // Watch for snapToken to be set by Livewire
             this.$watch('snapToken', token => {
                 if (token) {
-                    window.snap.pay(token, {
-                        onSuccess: function(result){
-                            /* You mayImplement client-side logic here */
-                            console.log(result);
-                            // Redirect to a success page or back to cart
-                            window.location.href = '{{ route('products.list') }}'; 
-                        },
-                        onPending: function(result){
-                            /* You may implement client-side logic here */
-                            console.log(result);
-                            window.location.href = '{{ route('products.list') }}'; 
-                        },
-                        onError: function(result){
-                            /* You may implement client-side logic here */
-                            console.log(result);
-                            alert('Payment failed. Please try again.');
-                        },
-                        onClose: function(){
-                            /* You may implement client-side logic here */
-                            alert('You closed the popup without finishing the payment.');
-                        }
-                    });
+                    // Redirect mode instead of popup
+                    window.location.href = `https://app.sandbox.midtrans.com/snap/v2/vtweb/${token}`;
                 }
             });
         }
-    }"
-    x-init="initSnap()"
->
-    {{-- 1. Midtrans Snap.js Script --}}
-    <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+    }" x-init="initSnap()" wire:ignore>
+    {{-- <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script> --}}
 
     {{-- 2. Page Title --}}
     <div class="mt-5 mb-8">
@@ -50,7 +26,7 @@
     {{-- 3. Order Summary --}}
     <div class="bg-white p-6 rounded-2xl shadow-lg">
         <h3 class="text-lg font-semibold border-b pb-3 mb-3">Ringkasan Pesanan</h3>
-        
+
         <div class="space-y-2">
             @if ($order)
                 @foreach ($order->items as $item)
@@ -75,12 +51,8 @@
 
     {{-- 4. Pay Button --}}
     <div class="mt-8">
-        <button 
-            wire:click="generateSnapToken"
-            wire:loading.attr="disabled"
-            wire:target="generateSnapToken"
-            class="w-full bg-[#E13220] text-white font-semibold py-3 rounded-lg shadow-md hover:bg-red-700 transition-colors"
-        >
+        <button wire:click="generateSnapToken" wire:loading.attr="disabled" wire:target="generateSnapToken"
+            class="w-full bg-[#E13220] text-white font-semibold py-3 rounded-lg shadow-md hover:bg-red-700 transition-colors">
             <span wire:loading.remove wire:target="generateSnapToken">
                 Bayar Sekarang
             </span>
