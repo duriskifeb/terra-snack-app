@@ -21,7 +21,7 @@
     </div>
 
     <div
-        class="fixed py-10 flex flex-col gap-8 bottom-0 max-w-content mx-auto px-mobile-gutter left-0 right-0 w-full bg-white border-t-4 border-[#E13220] rounded-t-2xl shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+        class="sticky py-10 flex flex-col gap-8 bottom-0 max-w-content mx-auto px-mobile-gutter left-0 right-0 w-full bg-white border-t-4 border-[#E13220] rounded-t-2xl shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
 
         <div>
             <div class="flex justify-between items-center text-xs  text-gray-700 mb-2">
@@ -35,7 +35,7 @@
         </div>
 
         <div>
-            <a href="#"
+            <a href="{{ route('checkout') }}" wire:navigate
                 class="block w-full text-sm text-center bg-[#E13220] text-white font-semibold py-2 rounded-lg shadow-md hover:bg-red-700 transition-colors">
                 Lanjutkan Ke Pembayaran
             </a>

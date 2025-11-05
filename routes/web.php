@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\MidtransWebhookController;
 use App\Livewire\Cart\CartPage;
+use App\Livewire\CheckoutPage;
 use App\Livewire\Products\ProductList;
 use App\Livewire\Products\ProductCustomize;
 use Illuminate\Support\Facades\Route;
@@ -20,3 +22,7 @@ Route::get('/products', ProductList::class)
 Route::get('/products/{product}/customize', ProductCustomize::class)
     ->middleware('web')
     ->name('product.customize');
+
+Route::get('/checkout', CheckoutPage::class)
+    ->middleware('web') 
+    ->name('checkout');
