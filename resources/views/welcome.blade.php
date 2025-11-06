@@ -1,4 +1,5 @@
 <x-guest-layout>
+
     <div class="text-center mb-6">
         <img src="{{ asset('images/logoTerraSnack.svg') }}" alt="Terra Snack Logo" class="mx-auto w-24 mb-2">
         
