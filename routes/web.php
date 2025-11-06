@@ -10,7 +10,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-<<<<<<< HEAD
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -22,7 +21,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-=======
 Route::get('/cart', CartPage::class)
     ->middleware('web')
     ->name('cart');
@@ -34,4 +32,3 @@ Route::get('/products', ProductList::class)
 Route::get('/products/{product}/customize', ProductCustomize::class)
     ->middleware('web')
     ->name('product.customize');
->>>>>>> 83aa8b2c1e9ad908df4ba35b310c0ed855065598
