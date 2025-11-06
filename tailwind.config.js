@@ -15,6 +15,12 @@ export default {
                 sans: ["Figtree", ...defaultTheme.fontFamily.sans],
                 inter: ["Inter", "sans-serif"],
             },
+            maxWidth: {
+                'content': '500px',  
+            },
+            padding: {
+                'mobile-gutter': '20px',
+            }
         },
     },
 

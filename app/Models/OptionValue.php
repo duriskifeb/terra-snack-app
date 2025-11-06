@@ -11,11 +11,13 @@ class OptionValue extends Model
     protected $fillable = [
         'customization_option_id',
         'name',
+        'detail',
         'price_modifier',
     ];
 
     protected $casts = [
         'price_modifier' => 'decimal:2',
+         'details' => 'array',
     ];
 
     public function customizationOption(): BelongsTo
