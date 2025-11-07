@@ -5,24 +5,21 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('product_customizable_options', function (Blueprint $table) {
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->foreignId('customization_option_id')->constrained('customization_options')->cascadeOnDelete();
-            $table->primary(['product_id', 'customization_option_id'], 'prod_cust_option_primary');
+        Schema::create('customization_options', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('type'); 
+            $table->integer('order')->default(0); 
+            $table->boolean('is_required')->default(false); 
+            $table->boolean('multiple_selection')->default(false); 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('product_customizable_options');
+        Schema::dropIfExists('customization_options');
     }
 };
