@@ -16,8 +16,7 @@ class Customer extends Model
         'address'
     ];
        protected $dates = ['deleted_at'];
-
-    // Relationship ke orders (jika needed)
+    //  customer
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'user_id');
