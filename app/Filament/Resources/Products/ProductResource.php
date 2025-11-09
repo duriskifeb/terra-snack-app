@@ -54,7 +54,7 @@ class ProductResource extends Resource
                     ->default(null)
                     ->columnSpanFull(),
                 FileUpload::make('image_url')
-                    ->image(),
+
             ]);
     }
 
@@ -72,9 +72,10 @@ class ProductResource extends Resource
                     ->label('Harga')
                     ->money('IDR')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('image_url')
-                ->label('Gambar')
-                ,
+                Tables\Columns\ImageColumn::make('image_url')
+                    ->label('Gambar')
+                    ->size(70) 
+                    ->extraImgAttributes(['class' => 'object-cover']),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
