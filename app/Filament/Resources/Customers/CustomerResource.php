@@ -22,10 +22,23 @@ class CustomerResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('email'),
-                Tables\Columns\TextColumn::make('phone'),
-                Tables\Columns\TextColumn::make('address'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nama')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('phone')
+                    ->label('Telepon')
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('address')
+                    ->label('Alamat')
+                    ->limit(50)
+                    ->tooltip(fn($record) => $record->address)
             ]);
     }
 
