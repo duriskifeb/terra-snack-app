@@ -19,6 +19,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Tables;
 use Illuminate\Support\Str;
 
 class ProductResource extends Resource
@@ -36,7 +37,7 @@ class ProductResource extends Resource
                     ->required(),
                 TextInput::make('name')
                     ->required()
-                    ->live(onBlur: true) 
+                    ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, $set) {
                         if (!empty($state)) {
                             $set('slug', Str::slug($state));
@@ -61,16 +62,19 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('category.name')
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label('Kategori')
                     ->searchable(),
-                TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nama')
                     ->searchable(),
-                TextColumn::make('slug')
-                    ->searchable(),
-                TextColumn::make('price')
+                Tables\Columns\TextColumn::make('price')
+                    ->label('Harga')
                     ->money('IDR')
                     ->sortable(),
-                ImageColumn::make('image_url'),
+                Tables\Columns\TextColumn::make('image_url')
+                ->label('Gambar')
+                ,
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
