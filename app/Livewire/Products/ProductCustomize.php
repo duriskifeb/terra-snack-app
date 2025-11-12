@@ -183,7 +183,7 @@ class ProductCustomize extends Component
                     $newItem->optionValues()->attach($selectedOptionIds);
                 }
             }
-            
+            $this->dispatch('show-success', 'Barang berhasil disimpan ke keranjang!');            
             return redirect()->route('cart');
 
         } catch (\Exception $e) {

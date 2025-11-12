@@ -2,97 +2,105 @@
 
 namespace App\Livewire;
 
+use App\Models\Cart;
 use App\Models\Order;
 use App\Models\User;
-use App\Models\Cart;
-use App\Services\MidtransService; 
-use Illuminate\Support\Str;
-use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Log; 
-
+use Livewire\Attributes\Layout;
+use Livewire\WithFileUploads;
 
 #[Layout('components.layouts.customer')]
 class CheckoutPage extends Component
 {
-    public ?Cart $cart = null;
-    public $total = 0;
+    use WithFileUploads;
+
+    public $cart;
+    public ?Order $order = null;
+    public $totalPrice = 0;
+    public $subtotal = 0;
     public $packagingFeeTotal = 0;
 
-    public ?string $snapToken = null;
-    public ?Order $order = null;
+    public $paymentProof;
 
     public function mount()
     {
-        // 1. Load the cart data (using test user)
-        $user = User::find(1); // Using test user
+        $user = User::find(1);
         if (!$user) {
-            abort(404, 'Test user not found.');
+            abort(404, 'User tidak ditemukan.');
         }
-        $this->cart = $user->cart()->with(['items.product', 'items.optionValues'])->first();
+
+        $this->cart = $user->cart()->with('items.product')->first();
 
         if (!$this->cart || $this->cart->items->isEmpty()) {
-            return redirect()->route('products.list');
+            $this->dispatch('show-error', 'Keranjang Anda kosong.');
+            return $this->redirect(route('products.list'));
         }
 
+        $this->subtotal = $this->cart->items->sum('subtotal');
         $itemCount = $this->cart->items->sum('quantity');
-        $packagingFeePerItem = 1000; 
+        $packagingFeePerItem = 1000;
         $this->packagingFeeTotal = $itemCount * $packagingFeePerItem;
-        $this->total = $this->cart->items->sum('subtotal') + $this->packagingFeeTotal;
 
-        $this->createOrder();
+
+        $this->totalPrice = $this->subtotal + $this->packagingFeeTotal;
+
+        $existingOrder = Order::where('user_id', $user->id)
+            ->where('payment_status', 'unpaid')
+            ->first();
+
+        if ($existingOrder) {
+            $this->order = $existingOrder;
+        } else {
+            DB::transaction(function () use ($user) {
+                $this->order = Order::create([
+                    'user_id' => $user->id,
+                    'packaging_fee_total' => $this->packagingFeeTotal,
+                    'total_price' => $this->totalPrice,
+                    'status' => 'pending',
+                    'payment_status' => 'unpaid',
+                    'payment_method' => 'QRIS Statis',
+                ]);
+
+                foreach ($this->cart->items as $item) {
+                    $this->order->items()->create([
+                        'product_id' => $item->product_id,
+                        'product_name' => $item->product->name,
+                        'quantity' => $item->quantity,
+                        'unit_price' => $item->unit_price,
+                        'subtotal' => $item->subtotal,
+                    ]);
+
+                    $item->load('optionValues');
+                    $newItem = $this->order->items()->latest()->first();
+                    $newItem->optionValues()->attach($item->optionValues->pluck('id'));
+                }
+
+                $this->cart->items()->delete();
+                $this->cart->refresh();
+            });
+        }
     }
 
-    public function createOrder()
+    public function uploadPaymentProof()
     {
-        $user = User::find(1); 
-
-        $this->order = Order::create([
-            'user_id' => $user->id,
-            'packaging_fee_per_item' => 1000,
-            'packaging_fee_total' => $this->packagingFeeTotal,
-            'total_price' => $this->total,
-            'status' => 'pending', 
-            'payment_status' => 'unpaid', 
-            'gross_amount' => $this->total,
+        $this->validate([
+            'paymentProof' => 'required|image|max:2048',
         ]);
 
-        foreach ($this->cart->items as $cartItem) {
-            $orderItem = $this->order->items()->create([
-                'product_id' => $cartItem->product_id,
-                'product_name' => $cartItem->product->name,
-                'quantity' => $cartItem->quantity,
-                'unit_price' => $cartItem->unit_price,
-                'subtotal' => $cartItem->subtotal,
-            ]);
+        $path = $this->paymentProof->store('payment_proofs', 'public');
 
-            $orderItem->optionValues()->attach($cartItem->optionValues->pluck('id'));
-        }
+        $this->order->update([
+            'payment_proof' => $path,
+            'payment_status' => 'pending_payment',
+            'paid_at' => now(),
+        ]);
 
         $this->cart->items()->delete();
-        $this->cart->delete();
-    }
+        $this->cart->refresh();
 
-    public function generateSnapToken(MidtransService $midtransService) 
-    {
-        if (!$this->order) {
-            $this->dispatch('show-error', 'Gagal memuat pesanan.');
-            return;
-        }
-
-        try {
-            $response = $midtransService->createSnapToken($this->order);
-            
-            $this->snapToken = $response['token'];
-            
-            $this->order->update([
-                'gateway_ref' => $response['gateway_ref'],
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Midtrans Snap Token Error: ' . $e->getMessage());
-            $this->dispatch('show-error', 'Gagal memproses pembayaran. Silakan coba lagi.');
-        }
+        $this->dispatch('show-success', 'Bukti pembayaran berhasil di-upload. Silakan tunggu konfirmasi.');
     }
 
     public function render()

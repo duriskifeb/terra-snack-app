@@ -16,11 +16,13 @@ return new class extends Migration {
             $table->decimal('packaging_fee_per_item', 10, 2)->default(0.00);
             $table->decimal('packaging_fee_total', 10, 2)->default(0.00);
             $table->decimal('total_price', 10, 2);
-            $table->enum('status', allowed: ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
             $table->string('gateway_ref')->nullable();
             $table->decimal('gross_amount', 10, 2)->nullable();
             $table->enum('payment_status', ['unpaid', 'pending_payment', 'paid', 'expired', 'failed'])->default('unpaid');
             $table->string('payment_method')->nullable();
+            $table->string('payment_proof')->nullable(); 
+            $table->timestamp('paid_at')->nullable();
             $table->timestamps();
         });
     }

@@ -37,6 +37,7 @@ class CartPage extends Component
     {
         $this->loadCartDetails();
         $this->calculateTotals();
+        $this->dispatch('show-success', 'Keranjang diperbarui!');
     }
 
     public function loadCartDetails()
@@ -52,6 +53,7 @@ class CartPage extends Component
             $this->subtotal = 0;
             $this->packagingFeeTotal = 0;
             $this->total = 0;
+             $this->dispatch('show-error', 'Keranjang Anda kosong.');
             return;
         }
 

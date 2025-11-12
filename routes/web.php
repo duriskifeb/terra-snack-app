@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\MidtransWebhookController;
 use App\Livewire\Cart\CartPage;
 use App\Livewire\CheckoutPage;
 use App\Livewire\Products\ProductList;

@@ -9,9 +9,7 @@
             <div class="rounded-lg p-4">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-xl font-semibold">{{ $group->name }}</h3>
-                    <button 
-                        wire:click="resetTopping({{ $group->id }})"
-                        type="button"
+                    <button wire:click="resetTopping({{ $group->id }})" type="button"
                         class="text-sm text-gray-500 hover:text-red-600 transition-colors">
                         Reset
                     </button>
@@ -31,10 +29,7 @@
                                         <span class="text-sm">Gratis</span>
                                     @endif
 
-                                    <input 
-                                        type="radio" 
-                                        class="sr-only peer" 
-                                        wire:model.live="selectedOptions.{{ $group->id }}"
+                                    <input type="radio" class="sr-only peer" wire:model.live="selectedOptions.{{ $group->id }}"
                                         value="{{ $value->id }}">
                                     <span
                                         class="w-4 h-4 border border-gray-400 rounded-full peer-checked:bg-red-600 peer-checked:border-red-600"></span>
@@ -73,7 +68,8 @@
         </div>
     </div>
 
-    <div class="sticky  py-10 px-mobile-gutter p-4 bottom-0 max-w-content mx-auto  left-0 right-0 w-full bg-white border-t-4 border-[#E13220] rounded-t-2xl shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+    <div
+        class="sticky  py-10 px-mobile-gutter p-4 bottom-0 max-w-content mx-auto  left-0 right-0 w-full bg-white border-t-4 border-[#E13220] rounded-t-2xl shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
         <div class="flex justify-between items-center mb-3">
             <span class="text-sm font-semibold">Total Pembayaran</span>
             <span class="text-sm font-bold text-red-600">
@@ -86,3 +82,25 @@
         </button>
     </div>
 </div>
+
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('show-success', message => {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: message,
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+                background: '#fff',
+                color: '#333',
+                customClass: {
+                    popup: 'rounded-xl shadow-md',
+                    title: 'font-medium'
+                }
+            });
+        });
+    });
+</script>

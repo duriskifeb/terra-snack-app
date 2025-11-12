@@ -18,6 +18,8 @@ class Order extends Model
         'gross_amount',
         'payment_status',
         'payment_method',
+        'payment_proof', 
+        'paid_at',      
     ];
 
     protected $casts = [
@@ -27,6 +29,7 @@ class Order extends Model
         'gross_amount' => 'decimal:2',
         'status' => 'string',
         'payment_status' => 'string',
+        'paid_at' => 'datetime', 
     ];
 
     public function user(): BelongsTo
