@@ -2,6 +2,8 @@
 
 use App\Livewire\Cart\CartPage;
 use App\Livewire\CheckoutPage;
+use App\Livewire\CustomerHistory\CustomerHistoryDetailPage;
+use App\Livewire\CustomerHistory\CustomerHistoryPage;
 use App\Livewire\Products\ProductList;
 use App\Livewire\Products\ProductCustomize;
 use Illuminate\Support\Facades\Route;
@@ -23,5 +25,13 @@ Route::get('/products/{product}/customize', ProductCustomize::class)
     ->name('product.customize');
 
 Route::get('/checkout', CheckoutPage::class)
-    ->middleware('web') 
+    ->middleware('web')
     ->name('checkout');
+
+Route::get('/history', CustomerHistoryPage::class)
+    ->middleware('web')
+    ->name('customer-history.list');
+
+Route::get('/history/{orderId}', CustomerHistoryDetailPage::class)
+    ->middleware('web')
+    ->name('customer-history.detail');

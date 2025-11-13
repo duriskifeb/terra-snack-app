@@ -1,7 +1,10 @@
 <nav class="w-full mt-4" x-data="{ open: false }" wire:ignore>
     <div class="max-w-content mx-auto px-mobile-gutter">
         <ul class="flex justify-between items-center">
-            <li><img src="{{ asset('assets/logo.webp') }}" alt="logo" class="w-12"></li>
+            <li>
+                
+                <img src="{{ asset('assets/logo.webp') }}" alt="logo" class="w-12">
+            </li>
             <li>
                 <button @click="open = true"
                     class="text-2xl bg-[#E13220] rounded-full text-white p-[0.30rem] w-10 h-10 flex items-center justify-center">
@@ -47,13 +50,13 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
+                    <a href="{{ route('customer-history.list')  }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
                         <i class="fa-solid fa-file-invoice text-[#E13220] w-6 text-center"></i>
                         <span>Riwayat Transaksi</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
+                    <a href="" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
                         <i class="fa-solid fa-user text-[#E13220] w-6 text-center"></i>
                         <span>Akun</span>
                     </a>

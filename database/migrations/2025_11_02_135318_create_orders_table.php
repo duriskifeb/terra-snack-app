@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->decimal('packaging_fee_total', 10, 2)->default(0.00);
             $table->decimal('total_price', 10, 2);
             $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
-            $table->string('gateway_ref')->nullable();
             $table->decimal('gross_amount', 10, 2)->nullable();
             $table->enum('payment_status', ['unpaid', 'pending_payment', 'paid', 'expired', 'failed'])->default('unpaid');
             $table->string('payment_method')->nullable();
