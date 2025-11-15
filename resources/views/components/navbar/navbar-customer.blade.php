@@ -2,8 +2,9 @@
     <div class="max-w-content mx-auto px-mobile-gutter">
         <ul class="flex justify-between items-center">
             <li>
-                
-                <img src="{{ asset('assets/logo.webp') }}" alt="logo" class="w-12">
+               <a href="{{ route('products.list')  }}">
+                    <img src="{{ asset('assets/logo.webp') }}" alt="logo" class="w-12">
+                </a> 
             </li>
             <li>
                 <button @click="open = true"

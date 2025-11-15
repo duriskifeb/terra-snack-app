@@ -1,5 +1,5 @@
 <div>
-    <div class="flex justify-center gap-7 mb-6 py-4  sticky top-0 bg-gray-50 z-10">
+    <div class="flex justify-center gap-7 mb-6 py-4  sticky top-0  z-10">
         @if ($categories)
             @foreach ($categories as $category)
                 <button wire:click="filterByCategory({{ $category->id }})" class=" 

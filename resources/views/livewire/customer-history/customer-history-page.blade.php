@@ -25,17 +25,17 @@
                 });
                 if(trigger) this.observer.observe(trigger);
             }
-        }" x-init="init()" class="space-y-4 max-h-[500px] overflow-auto rounded-lg p-3" x-ref="scrollContainer">
+        }" x-init="init()" class="space-y-10 max-h-[500px] overflow-auto rounded-lg p-3" x-ref="scrollContainer">
 
         @foreach($orders as $order)
                 <a href="{{ route('customer-history.detail', ['orderId' => $order->id]) }}"
-                    class=" p-4 bg-white rounded-lg flex flex-col gap-7 justify-between items-center duration-300 hover:bg-red-600 group font-semibold group-hover:text-white">
+                    class=" p-6  shadow rounded-lg flex flex-col gap-12 justify-between items-start duration-300 hover:bg-red-600 group font-semibold group-hover:text-white">
                     <div class="space-y-3">
-                        <p class="font-bold group-hover:text-white  text-2xl text-gray-800">Order #{{ $order->id }}</p>
+                        <p class="font-bold group-hover:text-white  text-xl text-gray-800">Order #{{ $order->id }}</p>
 
                         <p class="text-sm text-gray-600 group-hover:text-white">
                             Status Pesanan:
-                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full
+                            <span class="inline-block px-2 ml-3 py-1 text-xs font-semibold rounded-full
                                 {{ match ($order->status) {
                                     'pending' => 'bg-yellow-100 text-yellow-800',
                                     'processing' => 'bg-blue-100 text-blue-800',
@@ -49,13 +49,10 @@
 
                         <p class="text-sm text-gray-600 group-hover:text-white">
                             Pembayaran:
-                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full ml-2
+                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full ml-3
                                 {{ match ($order->payment_status) {
                                     'unpaid' => 'bg-gray-100 text-gray-800',
-                                    'pending_payment' => 'bg-yellow-100 text-yellow-800',
                                     'paid' => 'bg-green-100 text-green-800',
-                                    'expired' => 'bg-red-100 text-red-800',
-                                    'failed' => 'bg-red-200 text-red-800',
                                     default => 'bg-gray-100 text-gray-800'
                                 } }}">
                                 {{ ucfirst(str_replace('_', ' ', $order->payment_status)) }}
@@ -66,7 +63,7 @@
                             Dibuat: {{ \Carbon\Carbon::parse($order->created_at)->format('d M Y H:i') }}
                         </p>
 
-                        <p class="text-lg text-gray-600 group-hover:text-white">
+                        <p class="text-2xl text-gray-600 group-hover:text-white">
                             Total: <span class="font-semibold">Rp
                                 {{ number_format($order->total_price, 0, ',', '.') }}</span>
                         </p>

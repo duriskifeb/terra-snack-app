@@ -17,6 +17,7 @@ class CustomerHistoryDetailPage extends Component
             ->where('id', $orderId)
             ->firstOrFail();
     }
+
     public function render()
     {
         return view('livewire.customer-history.customer-history-detail-page');

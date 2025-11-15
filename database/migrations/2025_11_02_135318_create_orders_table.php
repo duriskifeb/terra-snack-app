@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->decimal('total_price', 10, 2);
             $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
             $table->decimal('gross_amount', 10, 2)->nullable();
-            $table->enum('payment_status', ['unpaid', 'pending_payment', 'paid', 'expired', 'failed'])->default('unpaid');
+            $table->enum('payment_status', ['unpaid', 'pending_verification',  'paid'])->default('unpaid');
             $table->string('payment_method')->nullable();
             $table->string('payment_proof')->nullable(); 
             $table->timestamp('paid_at')->nullable();

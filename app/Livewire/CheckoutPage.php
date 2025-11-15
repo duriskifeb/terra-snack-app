@@ -93,7 +93,7 @@ class CheckoutPage extends Component
 
         $this->order->update([
             'payment_proof' => $path,
-            'payment_status' => 'pending_payment',
+            'payment_status' => 'paid',
             'paid_at' => now(),
         ]);
 
