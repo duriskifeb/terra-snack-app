@@ -6,7 +6,7 @@ use App\Models\Order;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('components.layouts.customer')]
+#[Layout('layouts.customer')] 
 class CustomerHistoryDetailPage extends Component
 {
     public Order $order;

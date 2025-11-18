@@ -3,11 +3,12 @@
 namespace App\Livewire\CustomerHistory;
 
 use App\Models\User;
+use Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Collection;
 
-#[Layout('components.layouts.customer')]
+#[Layout('layouts.customer')] 
 class CustomerHistoryPage extends Component
 {
     public Collection $orders;
@@ -35,12 +36,18 @@ class CustomerHistoryPage extends Component
 
     private function loadOrders()
     {
-        $user = User::find(1); 
+        $user = Auth::user();
         if (!$user) {
             $this->hasMorePages = false;
             $this->loading = false;
-            return;
+            return redirect()->route('login');
         }
+        // $user = User::find(1); 
+        // if (!$user) {
+        //     $this->hasMorePages = false;
+        //     $this->loading = false;
+        //     return;
+        // }
 
         $skip = ($this->page - 1) * $this->perPage;
 

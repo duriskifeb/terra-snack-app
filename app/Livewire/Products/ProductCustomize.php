@@ -6,12 +6,13 @@ use App\Models\CartItem; // <-- Added this
 use App\Models\OptionValue;
 use App\Models\Product;
 use App\Models\User;
+use Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url; // <-- Added this
 use Livewire\Component;
 use Log;
 
-#[Layout('components.layouts.customer')]
+#[Layout('layouts.customer')] 
 class ProductCustomize extends Component
 {
     public Product $product;
@@ -124,9 +125,9 @@ class ProductCustomize extends Component
 
     public function saveToCart()
     {
-        $user = User::find(1); 
+        $user = Auth::user();
         if (!$user) {
-            abort(500, 'Test user not found.');
+            return redirect()->route('login');
         }
         $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
 

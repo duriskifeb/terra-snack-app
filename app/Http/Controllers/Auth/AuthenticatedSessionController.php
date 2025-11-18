@@ -16,9 +16,6 @@ class AuthenticatedSessionController extends Controller
         return view('auth.login');
     }
 
-    /**
-     * Proses login
-     */
     public function store(Request $request)
     {
         // Validasi input
@@ -32,16 +29,13 @@ class AuthenticatedSessionController extends Controller
             $request->session()->regenerate();
 
             // Jika sukses login
-            return redirect()->intended('/dashboard')->with('success', 'Login berhasil! Selamat datang kembali 👋');
+            return redirect()->intended('/products')->with('success', 'Login berhasil! Selamat datang kembali');
         }
 
         // Jika gagal login → kirim pesan error ke SweetAlert
         return back()->with('error', 'Masukkan Username dan Password anda dengan benar!');
     }
 
-    /**
-     * Logout
-     */
     public function destroy(Request $request)
     {
         Auth::guard('web')->logout();

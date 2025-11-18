@@ -29,20 +29,20 @@
 
         @foreach($orders as $order)
                 <a href="{{ route('customer-history.detail', ['orderId' => $order->id]) }}"
-                    class=" p-6  shadow rounded-lg flex flex-col gap-12 justify-between items-start duration-300 hover:bg-red-600 group font-semibold group-hover:text-white">
-                    <div class="space-y-3">
+                    class=" p-6  shadow rounded-lg flex flex-col gap-12  duration-300 hover:bg-red-600 group font-semibold group-hover:text-white">
+                    <div class="space-y-4">
                         <p class="font-bold group-hover:text-white  text-xl text-gray-800">Order #{{ $order->id }}</p>
 
                         <p class="text-sm text-gray-600 group-hover:text-white">
                             Status Pesanan:
                             <span class="inline-block px-2 ml-3 py-1 text-xs font-semibold rounded-full
-                                {{ match ($order->status) {
-                                    'pending' => 'bg-yellow-100 text-yellow-800',
-                                    'processing' => 'bg-blue-100 text-blue-800',
-                                    'completed' => 'bg-green-100 text-green-800',
-                                    'cancelled' => 'bg-red-100 text-red-800',
-                                    default => 'bg-gray-100 text-gray-800'
-                                } }}">
+                                    {{ match ($order->status) {
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'processing' => 'bg-blue-100 text-blue-800',
+                                        'completed' => 'bg-green-100 text-green-800',
+                                        'cancelled' => 'bg-red-100 text-red-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    } }}">
                                 {{ ucfirst($order->status) }}
                             </span>
                         </p>
@@ -50,11 +50,11 @@
                         <p class="text-sm text-gray-600 group-hover:text-white">
                             Pembayaran:
                             <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full ml-3
-                                {{ match ($order->payment_status) {
-                                    'unpaid' => 'bg-gray-100 text-gray-800',
-                                    'paid' => 'bg-green-100 text-green-800',
-                                    default => 'bg-gray-100 text-gray-800'
-                                } }}">
+                                        {{ match ($order->payment_status) {
+                                            'unpaid' => 'bg-gray-100 text-gray-800',
+                                            'paid' => 'bg-green-100 text-green-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                 {{ ucfirst(str_replace('_', ' ', $order->payment_status)) }}
                             </span>
                         </p>
@@ -67,6 +67,10 @@
                             Total: <span class="font-semibold">Rp
                                 {{ number_format($order->total_price, 0, ',', '.') }}</span>
                         </p>
+
+                        <button class="bg-red-600 py-2 font-semibold group-hover:text-red-500 group-hover:bg-white rounded-full flex justify-center items-center text-white w-full">
+                            Lihat Detail
+                        </button>
                     </div>
                 </a>
         @endforeach

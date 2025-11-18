@@ -8,7 +8,7 @@ use Auth;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
-#[Layout('components.layouts.customer')] 
+#[Layout('layouts.customer')] 
 class CartPage extends Component
 {
     public Cart $cart;

@@ -4,11 +4,12 @@ namespace App\Livewire\Products;
 
 use App\Models\Product;
 use App\Models\User;
+use Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Log;
 
-#[Layout('components.layouts.customer')] 
+#[Layout('layouts.customer')] 
 class ProductItem extends Component
 {
     public Product $product;
@@ -20,14 +21,14 @@ class ProductItem extends Component
 
     public function addToCart()
     {
-        $user = User::find(1);
-        if (!$user) {
-            abort(500, 'Test user not found.');
-        }
-        // $user = Auth::user();
+        // $user = User::find(1);
         // if (!$user) {
-        //     return redirect()->route('login');
+        //     abort(500, 'Test user not found.');
         // }
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
 
         try {
             $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);

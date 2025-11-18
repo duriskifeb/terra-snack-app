@@ -11,7 +11,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\WithFileUploads;
 
-#[Layout('components.layouts.customer')]
+#[Layout('layouts.customer')] 
 class CheckoutPage extends Component
 {
     use WithFileUploads;
@@ -26,9 +26,9 @@ class CheckoutPage extends Component
 
     public function mount()
     {
-        $user = User::find(1);
+        $user = Auth::user();
         if (!$user) {
-            abort(404, 'User tidak ditemukan.');
+            return redirect()->route('login');
         }
 
         $this->cart = $user->cart()->with('items.product')->first();

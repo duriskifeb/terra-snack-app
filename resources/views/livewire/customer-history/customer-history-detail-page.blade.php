@@ -114,8 +114,8 @@
 
         </div>
 
-        <div class="mt-3 text-right font-semibold text-gray-700 text-lg">
-            Total Item:
+        <div class="mt-3 text-right font-semibold text-gray-700 text-xl">
+            Total Item :
             <span class="text-[#E13220]">
                 Rp {{ number_format($order->items->sum(fn($i) => $i->unit_price * $i->quantity), 0, ',', '.') }}
             </span>

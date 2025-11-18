@@ -7,7 +7,7 @@
             Selamat Datang di Terra Snack
         </h1>
         <p class="text-sm text-gray-500">
-            Nikmati camilan lezat dengan akunmu 🍪
+            Nikmati camilan lezat dengan akunmu 
         </p>
     </div>
 

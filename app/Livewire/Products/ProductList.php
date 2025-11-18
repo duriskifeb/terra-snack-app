@@ -7,7 +7,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 
-#[Layout('components.layouts.customer')] 
+#[Layout('layouts.customer')] 
 class ProductList extends Component
 {
     public $categories;

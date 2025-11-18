@@ -7,7 +7,7 @@ use Log;
 use Livewire\Attributes\Layout;
 use App\Models\CartItem as CartItemModel;
 
-#[Layout('components.layouts.customer')]
+#[Layout('layouts.customer')] 
 class CartItem extends Component
 {
     public CartItemModel $cartItem;

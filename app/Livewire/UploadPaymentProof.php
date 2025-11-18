@@ -7,7 +7,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-#[Layout('components.layouts.customer')]
+#[Layout('layouts.customer')] 
 class UploadPaymentProof extends Component
 {
     use WithFileUploads;
