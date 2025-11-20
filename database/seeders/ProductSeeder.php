@@ -11,29 +11,72 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $category = Category::first();
+        // 1. Ambil ID Kategori yang Sudah Dibuat
+        $snackCategory = Category::where('slug', 'snack')->first();
+        $minumanCategory = Category::where('slug', 'minuman')->first();
 
-        $productsData = [
-            ['name' => 'Laptop Gaming A', 'price' => 15000000, 'description' => 'Laptop kencang untuk gaming.'],
-            ['name' => 'Smartphone Pro X', 'price' => 7500000, 'description' => 'Smartphone flagship terbaru.'],
-            ['name' => 'Headset Bluetooth Z', 'price' => 850000, 'description' => 'Headset dengan noise cancelling.'],
-            ['name' => 'Mouse Wireless E', 'price' => 250000, 'description' => 'Mouse ergonomis dan presisi.'],
-            ['name' => 'Monitor 4K Curved', 'price' => 4500000, 'description' => 'Monitor resolusi tinggi untuk desain.'],
+        if (!$snackCategory || !$minumanCategory) {
+            $this->command->error('❌ Gagal: Kategori Snack atau Minuman belum dibuat.');
+            return;
+        }
+
+        // 2. Data Produk Minuman
+        $minumanProducts = [
+            [
+                'name' => 'Air Putih',
+                'price' => 5000,
+                'description' => 'Air putih mineral segar',
+                'category_id' => $minumanCategory->id,
+            ]
         ];
 
-        foreach ($productsData as $data) {
+        $snackProducts = [
+            [
+                'name' => 'Chitato Sapi Panggang',
+                'price' => 20000,
+                'description' => 'Keripik kentang rasa sapi panggang',
+                'category_id' => $snackCategory->id,
+            ],
+            [
+                'name' => 'Chitato Lite',
+                'price' => 20000,
+                'description' => 'Chitato versi lite dengan kalori lebih rendah',
+                'category_id' => $snackCategory->id,
+            ],
+
+            [
+                'name' => 'Maxicorn Barbecue',
+                'price' => 22000,
+                'description' => 'Snack corn dengan rasa barbecue',
+                'category_id' => $snackCategory->id,
+            ],
+            [
+                'name' => 'Chitato Rumput Laut',
+                'price' => 25000,
+                'description' => 'Snack corn dengan rasa rumput laut',
+                'category_id' => $snackCategory->id,
+            ],
+                        [
+                'name' => 'Happytos Jagung Bakar',
+                'price' => 21000,
+                'description' => 'Snack corn dengan rasa jagung bakar',
+                'category_id' => $snackCategory->id,
+            ]
+
+        ];
+
+        $allProducts = array_merge($minumanProducts, $snackProducts);
+
+        foreach ($allProducts as $product) {
             Product::firstOrCreate(
-                ['name' => $data['name']],
-                [
-                    'category_id' => $category ? $category->id : null, 
-                    'slug' => Str::slug($data['name']),
-                    'price' => $data['price'],
-                    'description' => $data['description'],
-                    'image_url' => null
-                ]
+                ['slug' => Str::slug($product['name'])],
+                array_merge($product, [
+                    'slug' => Str::slug($product['name']),
+                ])
             );
         }
 
-        $this->command->info('✅ Sample products seeded successfully!');
+        $this->command->info('✅ All food and drink products seeded successfully!');
+        $this->command->info('Products: ' . Product::count());
     }
 }

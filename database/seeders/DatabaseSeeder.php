@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             CategoryProductSeeder::class, 
-            CustomerSeeder::class,
             ProductSeeder::class, 
+            CustomerSeeder::class,
         ]);
 
         User::firstOrCreate(
