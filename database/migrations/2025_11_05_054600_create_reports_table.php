@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_id')->nullable()->constrained('products');
+            $table->unsignedBigInteger('amount');
+            $table->string('title');
             $table->string('name');
             $table->string('type');
             $table->date('start_date');

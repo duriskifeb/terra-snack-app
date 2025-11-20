@@ -11,23 +11,25 @@ class CategoryProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $snackCategory = Category::create([
-            'name' => 'Snack',
-            'slug' => 'snack'
-        ]);
+        $snackCategory = Category::firstOrCreate(
+            ['slug' => 'snack'],
+            ['name' => 'Snack']
+        );
 
-        $minumanCategory = Category::create([
-            'name' => 'Minuman',
-            'slug' => 'minuman'
-        ]);
+        $minumanCategory = Category::firstOrCreate(
+            ['slug' => 'minuman'],
+            ['name' => 'Minuman']
+        );
 
-        Product::create([
-            'category_id' => $minumanCategory->id,
-            'name' => 'Air Putih',
-            'slug' => 'air-putih',
-            'price' => 5000,
-            'description' => 'Air putih mineral segar'
-        ]);
+        Product::firstOrCreate(
+            ['slug' => 'air-putih'],
+            [
+                'category_id' => $minumanCategory->id,
+                'name' => 'Air Putih',
+                'price' => 5000,
+                'description' => 'Air putih mineral segar'
+            ]
+        );
 
         $snackProducts = [
             [
@@ -69,9 +71,12 @@ class CategoryProductSeeder extends Seeder
         ];
 
         foreach ($snackProducts as $product) {
-            Product::create(array_merge($product, [
-                'category_id' => $snackCategory->id
-            ]));
+            Product::firstOrCreate(
+                ['slug' => $product['slug']],
+                array_merge($product, [
+                    'category_id' => $snackCategory->id
+                ])
+            );
         }
 
         $this->command->info('Categories and products seeded successfully!');
