@@ -5,16 +5,15 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
+// database/seeders/DatabaseSeeder.php YANG SUDAH KOREK
+
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         $this->call([
-            CategoryProductSeeder::class, 
-            ProductSeeder::class, 
+            CategoryProductSeeder::class,
+            ProductSeeder::class,
             CustomerSeeder::class,
         ]);
 
@@ -22,13 +21,14 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@mail.com'],
             [
                 'name' => 'Admin',
-                'password' => bcrypt('admin'), 
-                'role' => 'admin', 
+                'password' => bcrypt('admin'),
+                'role' => 'admin',
             ]
         );
-        
+
         $this->call([
             ReportSeeder::class, 
+            OrderSeeder::class, 
         ]);
     }
 }
