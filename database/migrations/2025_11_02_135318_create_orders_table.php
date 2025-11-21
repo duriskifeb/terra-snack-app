@@ -12,12 +12,12 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
+            $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
+            $table->enum('payment_status', ['unpaid', 'pending_verification', 'paid', 'expired'])->default('unpaid');
             $table->decimal('packaging_fee_per_item', 10, 2)->default(0.00);
             $table->decimal('packaging_fee_total', 10, 2)->default(0.00);
             $table->decimal('total_price', 10, 2);
-            $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
             $table->decimal('gross_amount', 10, 2)->nullable();
-            $table->enum('payment_status', ['unpaid', 'pending_verification',  'paid'])->default('unpaid');
             $table->string('payment_method')->nullable();
             $table->string('payment_proof')->nullable(); 
             $table->timestamp('paid_at')->nullable();

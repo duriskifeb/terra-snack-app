@@ -19,8 +19,9 @@ class OrderSeeder extends Seeder
         $products = Product::all();
         
         $paymentMethods = ['QRIS', 'Transfer Bank', 'Kartu Debit'];
-        $paymentStatuses = ['paid', 'unpaid', 'expired']; 
-        $orderStatuses = ['completed', 'processing', 'cancelled'];
+
+        $paymentStatuses = ['paid', 'unpaid', 'pending_verification', 'expired']; 
+        $orderStatuses = ['completed', 'processing', 'cancelled', 'pending'];
         
         if ($users->isEmpty() || $products->isEmpty()) {
             $this->command->error('❌ Gagal: Data dasar (User, Product) tidak lengkap.');
@@ -46,6 +47,9 @@ class OrderSeeder extends Seeder
 
             $packagingFeeTotal = $packagingFeePerItem * $totalItems;
             $totalPrice = $grossAmount + $packagingFeeTotal; 
+            
+            $paymentStatus = $paymentStatuses[array_rand($paymentStatuses)];
+            $paidAt = ($paymentStatus === 'paid') ? $orderDate->copy()->addMinutes(rand(5, 60)) : null;
 
             $order = Order::create([
                 'user_id' => $users->random()->id,
@@ -53,10 +57,10 @@ class OrderSeeder extends Seeder
                 'packaging_fee_total' => $packagingFeeTotal,
                 'total_price' => $totalPrice, 
                 'status' => $orderStatuses[array_rand($orderStatuses)],
-                'gateway_ref' => 'REF-' . Str::random(10),
                 'gross_amount' => $grossAmount,
-                'payment_status' => $paymentStatuses[array_rand($paymentStatuses)],
+                'payment_status' => $paymentStatus, 
                 'payment_method' => $paymentMethods[array_rand($paymentMethods)],
+                'paid_at' => $paidAt, 
                 'created_at' => $orderDate,
                 'updated_at' => $orderDate,
             ]);
@@ -69,12 +73,10 @@ class OrderSeeder extends Seeder
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
-                    
                     'product_name' => $product->name,
                     'quantity' => $quantity,
                     'unit_price' => $unitPrice,
                     'subtotal' => $subtotal,
-                    
                 ]);
             }
         }
