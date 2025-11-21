@@ -20,7 +20,7 @@ class CustomizationOptionResource extends Resource
 {
     protected static ?string $model = CustomizationOption::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'ionicon-options-outline';
 
     public static function form(Schema $schema): Schema
     {
