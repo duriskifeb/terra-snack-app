@@ -21,7 +21,7 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'bxs-category';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-category';
 
     public static function form(Schema $schema): Schema
     {
