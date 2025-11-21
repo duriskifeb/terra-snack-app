@@ -20,24 +20,22 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Filament\Tables\Filters\Filter; // Import Filter
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Enums\Filters\SelectOption;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Carbon;
-use pxlrbt\FilamentExcel\Actions\ExportAction; // ✅ Versi yang benar
-use pxlrbt\FilamentExcel\Exports\ExcelExport; // Import untuk Export
+use pxlrbt\FilamentExcel\Actions\ExportAction; 
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class ReportResource extends Resource
 {
     protected static ?string $model = Report::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartLine; // Ganti icon
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-report-money'; 
 
-    // Menonaktifkan create route (Karena Report hanya View)
     protected static bool $canCreate = false;
 
-    // Menonaktifkan edit/delete routes
     public static function canEdit($record): bool
     {
         return false;
@@ -62,7 +60,6 @@ class ReportResource extends Resource
     {
         return $schema
             ->components([
-                // Karena hanya view, form ini mungkin kosong atau berisi infolist jika diperlukan
             ]);
     }
 
@@ -70,7 +67,7 @@ class ReportResource extends Resource
     {
         return $schema
             ->components([
-                // Definisi Infolist jika diperlukan untuk ViewAction
+                
             ]);
     }
 
@@ -129,7 +126,7 @@ class ReportResource extends Resource
             ->toolbarActions([
                 ExportAction::make()->exports([
                     ExcelExport::make('report_export')
-                        ->fromTable() // Export data dari tabel
+                        ->fromTable() 
                         ->withFilename(fn ($export) => 'report-' . now()->timestamp),
                 ]),
             ])
