@@ -37,6 +37,7 @@ class CartPage extends Component
     {
         $this->loadCartDetails();
         $this->calculateTotals();
+        $this->dispatch('show-success', 'Keranjang diperbarui!');
     }
 
     public function loadCartDetails()
@@ -45,12 +46,14 @@ class CartPage extends Component
             $this->cart->load(['items.product', 'items.optionValues']);
         }
     }
+    
     public function calculateTotals()
     {
         if (!$this->cart || !$this->cart->relationLoaded('items')) {
             $this->subtotal = 0;
             $this->packagingFeeTotal = 0;
             $this->total = 0;
+             $this->dispatch('show-error', 'Keranjang Anda kosong.');
             return;
         }
 
@@ -65,7 +68,6 @@ class CartPage extends Component
 
     public function render()
     {
-        return view('livewire.cart.cart-page')
-            ->layout('components.layouts.customer');
+        return view('livewire.cart.cart-page');
     }
 }

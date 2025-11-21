@@ -11,7 +11,6 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Ambil ID Kategori yang Sudah Dibuat
         $snackCategory = Category::where('slug', 'snack')->first();
         $minumanCategory = Category::where('slug', 'minuman')->first();
 
@@ -20,7 +19,6 @@ class ProductSeeder extends Seeder
             return;
         }
 
-        // 2. Data Produk Minuman
         $minumanProducts = [
             [
                 'name' => 'Air Putih',
@@ -43,7 +41,6 @@ class ProductSeeder extends Seeder
                 'description' => 'Chitato versi lite dengan kalori lebih rendah',
                 'category_id' => $snackCategory->id,
             ],
-
             [
                 'name' => 'Maxicorn Barbecue',
                 'price' => 22000,
@@ -56,13 +53,12 @@ class ProductSeeder extends Seeder
                 'description' => 'Snack corn dengan rasa rumput laut',
                 'category_id' => $snackCategory->id,
             ],
-                        [
+            [
                 'name' => 'Happytos Jagung Bakar',
                 'price' => 21000,
                 'description' => 'Snack corn dengan rasa jagung bakar',
                 'category_id' => $snackCategory->id,
             ]
-
         ];
 
         $allProducts = array_merge($minumanProducts, $snackProducts);

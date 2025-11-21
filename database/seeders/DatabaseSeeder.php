@@ -30,5 +30,7 @@ class DatabaseSeeder extends Seeder
             ReportSeeder::class, 
             OrderSeeder::class, 
         ]);
+
+        $this->call(ProductSeeder::class);
     }
 }

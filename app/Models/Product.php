@@ -28,10 +28,11 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    
+
     public function customizationOptions(): BelongsToMany
     {
-        return $this->belongsToMany(CustomizationOption::class, 'product_customizable_option');
+        return $this->belongsToMany(CustomizationOption::class, 'product_customizable_options');
+
     }
 
     public function items(): HasMany
