@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Livewire\Cart\CartPage;
 use App\Livewire\CheckoutPage;
 use App\Livewire\CustomerHistory\CustomerHistoryDetailPage;
@@ -14,45 +13,24 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware(['auth', 'customer'])->group(function () {
+    Route::get('/cart', CartPage::class)->name('cart');
+    Route::get('/products', ProductList::class)->name('products.list');
+    Route::get('/products/{product}/customize', ProductCustomize::class)->name('product.customize');
+    Route::get('/checkout', CheckoutPage::class)->name('checkout');
+    Route::get('/history/{order}/upload-proof', UploadPaymentProof::class)->name('customer-history.upload-proof');
+    Route::get('/history', CustomerHistoryPage::class)->name('customer-history.list');
+    Route::get('/history/{orderId}', CustomerHistoryDetailPage::class)->name('customer-history.detail');
 });
 
-require __DIR__.'/auth.php';
-Route::get('/cart', CartPage::class)
-    ->middleware('web')
-    ->name('cart');
-
-Route::get('/products', ProductList::class)
-    ->middleware('web')
-    ->name('products.list');
-
-Route::get('/products/{product}/customize', ProductCustomize::class)
-    ->middleware('web')
-    ->name('product.customize');
-
-Route::get('/checkout', CheckoutPage::class)
-    ->middleware('web')
-    ->name('checkout');
-
-Route::get(
-    '/history/{order}/upload-proof',
-    UploadPaymentProof::class
-)->middleware('web')->name('customer-history.upload-proof');
-
-Route::get('/history', CustomerHistoryPage::class)
-    ->middleware('web')
-    ->name('customer-history.list');
 
 
 
-Route::get('/history/{orderId}', CustomerHistoryDetailPage::class)
-    ->middleware('web')
-    ->name('customer-history.detail');
+
+
+
+
+
+
+
 

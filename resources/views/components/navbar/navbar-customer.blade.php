@@ -2,9 +2,9 @@
     <div class="max-w-content mx-auto px-mobile-gutter">
         <ul class="flex justify-between items-center">
             <li>
-               <a href="{{ route('products.list')  }}">
+                <a href="{{ route('products.list')  }}">
                     <img src="{{ asset('assets/logo.webp') }}" alt="logo" class="w-12">
-                </a> 
+                </a>
             </li>
             <li>
                 <button @click="open = true"
@@ -51,7 +51,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('customer-history.list')  }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
+                    <a href="{{ route('customer-history.list')  }}"
+                        class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
                         <i class="fa-solid fa-file-invoice text-[#E13220] w-6 text-center"></i>
                         <span>Riwayat Transaksi</span>
                     </a>
@@ -64,10 +65,14 @@
                 </li>
 
                 <li class="mt-8 border-t pt-6">
-                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
-                        <i class="fa-solid fa-arrow-right-from-bracket text-[#E13220] w-6 text-center"></i>
-                        <span>Keluar</span>
-                    </a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 w-full text-left">
+                            <i class="fa-solid fa-arrow-right-from-bracket text-[#E13220] w-6 text-center"></i>
+                            <span>Keluar</span>
+                        </button>
+                    </form>
                 </li>
             </ul>
         </div>

@@ -11,7 +11,7 @@ class OptionValue extends Model
     protected $fillable = [
         'customization_option_id',
         'name',
-        'detail',
+        'details',
         'price_modifier',
     ];
 

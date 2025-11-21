@@ -1,4 +1,6 @@
 <x-guest-layout>
+    <div>
+
     <div class="flex justify-center mb-6">
         <img src="{{ asset('images/logoTerraSnack.svg') }}" alt="Terra Snack Logo" class="w-24 mx-auto">
     </div>
@@ -73,7 +75,6 @@
         </div>
     </form>
 
-    <!-- Script validasi input kosong -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.getElementById('loginForm').addEventListener('submit', function (e) {
