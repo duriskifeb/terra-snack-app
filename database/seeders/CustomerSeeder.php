@@ -3,11 +3,16 @@
 namespace Database\Seeders;
 
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class CustomerSeeder extends Seeder
 {
+    /**
+     * Run the migrations.
+     */
     public function run(): void
     {
         $customers = [
@@ -19,7 +24,7 @@ class CustomerSeeder extends Seeder
             ],
             [
                 'name' => 'Sari Indah',
-                'email' => 'sari.indah@email.com', 
+                'email' => 'sari.indah@email.com',
                 'phone' => '081298765432',
                 'address' => 'Jl. Sudirman Kav. 25, Jakarta Selatan',
             ],
@@ -78,9 +83,21 @@ class CustomerSeeder extends Seeder
                 ['email' => $customer['email']],
                 $customer
             );
+
+            User::firstOrCreate(
+                ['email' => $customer['email']],
+                [
+                    'name' => $customer['name'],
+                    'password' => Hash::make('password'),
+                    'role' => 'customer',
+                    'phone' => $customer['phone'],
+                ]
+            );
         }
 
         $this->command->info('✅ Sample customers seeded successfully!');
+        $this->command->info('👥 Sample users (customers) created successfully!');
         $this->command->info('📊 Total customers: ' . Customer::count());
+        $this->command->info('📊 Total users: ' . User::count());
     }
 }
