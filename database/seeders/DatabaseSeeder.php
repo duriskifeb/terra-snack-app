@@ -5,8 +5,6 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-// database/seeders/DatabaseSeeder.php YANG SUDAH KOREK
-
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
@@ -15,6 +13,7 @@ class DatabaseSeeder extends Seeder
             CategoryProductSeeder::class,
             ProductSeeder::class,
             CustomerSeeder::class,
+            CustomizationOptionSeeder::class, 
         ]);
 
         User::firstOrCreate(
@@ -28,10 +27,8 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call([
-            ReportSeeder::class, 
-            OrderSeeder::class, 
+            ReportSeeder::class,
+            OrderSeeder::class,
         ]);
-
-        $this->call(ProductSeeder::class);
     }
 }

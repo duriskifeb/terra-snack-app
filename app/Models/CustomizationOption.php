@@ -11,6 +11,7 @@ class CustomizationOption extends Model
     protected $fillable = [
         'name',
         'type', 
+        'slug',
         'order', 
         'is_required',
         'multiple_selection'

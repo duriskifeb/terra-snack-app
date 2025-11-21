@@ -6,22 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('customization_options', function (Blueprint $table) {
             $table->id();
-             $table->string('name')->unique();
+            $table->string('name');
+            $table->string('slug')->unique();
             $table->string('type');
+            $table->integer('order')->default(0); 
+            $table->boolean('is_required')->default(false); 
+            $table->boolean('multiple_selection')->default(false); 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('customization_options');

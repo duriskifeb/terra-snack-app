@@ -14,6 +14,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('customization_option_id')->constrained('customization_options')->cascadeOnDelete();
             $table->string('name');
+            $table->string('slug'); 
+            $table->decimal('price', 8, 2)->default(0);
+            $table->string('image_url')->nullable();
             $table->json('details')->nullable();
             $table->decimal('price_modifier', 10, 2)->default(0.00);
             $table->timestamps();
