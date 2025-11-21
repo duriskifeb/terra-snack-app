@@ -35,10 +35,12 @@ class OrdersTable
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'unpaid' => 'gray',
-                        'pending_payment' => 'warning',
+                        // 'pending_payment' => 'warning',
+                        'pending_verification' => 'warning',
                         'paid' => 'success',
                         'expired' => 'danger',
                         'failed' => 'danger',
+                        default => 'info',
                     }),
                     
                 TextColumn::make('payment_method')
