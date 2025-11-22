@@ -32,7 +32,7 @@ class OrderForm
                         ]),
 
                     Step::make('Pilih Sayur')
-                        // ->icon(Heroicon::BeakerO)
+                        ->icon(Heroicon::Beaker) 
                         ->schema([
                             Select::make('vegetable')
                                 ->label('Pilih Sayur (Opsional)')
@@ -58,7 +58,7 @@ class OrderForm
                         ]),
 
                     Step::make('Pilih Saus')
-                        // ->icon(Heroicon::BeakerO)
+                        ->icon(Heroicon::Beaker) 
                         ->schema([
                             Select::make('sauce')
                                 ->label('Pilih Saus')
