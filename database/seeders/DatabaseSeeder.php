@@ -31,10 +31,10 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'stand@mail.com'],
             [
-                'name' => 'Stand Operator',
+                'name' => 'Stand',
                 'password' => bcrypt('stanD567;'),
                 'role' => 'stand_staff',
-                'phone' => '08129876543',
+                'phone' => '0897654321',
             ]
         );
 
