@@ -7,7 +7,8 @@ use App\Filament\Stand\Resources\Checkouts\Pages\EditCheckout;
 use App\Filament\Stand\Resources\Checkouts\Pages\ListCheckouts;
 use App\Filament\Stand\Resources\Checkouts\Schemas\CheckoutForm;
 use App\Filament\Stand\Resources\Checkouts\Tables\CheckoutsTable;
-use App\Models\Checkout;
+// use App\Models\Checkout;
+use App\Models\Order;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -16,7 +17,7 @@ use Filament\Tables\Table;
 
 class CheckoutResource extends Resource
 {
-    protected static ?string $model = Checkout::class;
+    protected static ?string $model = Order::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
