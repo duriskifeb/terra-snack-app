@@ -4,7 +4,12 @@ namespace App\Filament\Stand\Resources\Orders\Schemas;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
 class OrderForm
 {
@@ -13,84 +18,91 @@ class OrderForm
         return $schema
             ->columns(1)
             ->components([
-                // Step tracker
-                Select::make('step')
-                    ->label('Step')
-                    ->options([
-                        1 => 'Pilih Produk',
-                        2 => 'Pilih Sayur',
-                        3 => 'Pilih Topping',
-                        4 => 'Pilih Saus',
-                        5 => 'Checkout',
-                    ])
-                    ->default(1),
+                Wizard::make([
+                    Step::make('Pilih Produk')
+                        ->icon(Heroicon::ShoppingBag)
+                        ->schema([
+                            Select::make('product')
+                                ->label('Pilih Produk')
+                                ->options([
+                                    'snack' => 'Snack',
+                                    'drink' => 'Minuman',
+                                ])
+                                ->required(),
+                        ]),
 
-                // STEP 1: Produk
-                Select::make('product')
-                    ->label('Pilih Produk')
-                    ->options([
-                        'snack' => 'Snack',
-                        'drink' => 'Minuman',
-                    ])
-                    ->required()
-                    ->visible(fn($get) => $get('step') === 1),
+                    Step::make('Pilih Sayur')
+                        // ->icon(Heroicon::BeakerO)
+                        ->schema([
+                            Select::make('vegetable')
+                                ->label('Pilih Sayur (Opsional)')
+                                ->options([
+                                    'tomato' => 'Tomato',
+                                    'cucumber' => 'Timun',
+                                    'sawi' => 'Sawi',
+                                ])
+                                ->nullable(),
+                        ]),
 
-                // STEP 2: Sayur
-                Select::make('vegetable')
-                    ->label('Pilih Sayur (Opsional)')
-                    ->options([
-                        'tomato' => 'Tomato',
-                        'cucumber' => 'Timun',
-                        'sawi' => 'Sawi',
-                    ])
-                    ->nullable()
-                    ->visible(fn($get) => $get('step') === 2),
+                    Step::make('Pilih Topping')
+                        ->icon(Heroicon::Sparkles)
+                        ->schema([
+                            Select::make('topping')
+                                ->label('Pilih Topping')
+                                ->options([
+                                    'mix_beef' => 'Mix Beef',
+                                    'mix_chicken' => 'Mix Chicken',
+                                    'mix_beef_chicken' => 'Mix Beef & Chicken',
+                                ])
+                                ->required(),
+                        ]),
 
-                // STEP 3: Topping
-                Select::make('topping')
-                    ->label('Pilih Topping')
-                    ->options([
-                        'mix_beef' => 'Mix Beef',
-                        'mix_chicken' => 'Mix Chicken',
-                        'mix_beef_chicken' => 'Mix Beef & Chicken',
-                    ])
-                    ->required()
-                    ->visible(fn($get) => $get('step') === 3),
+                    Step::make('Pilih Saus')
+                        // ->icon(Heroicon::BeakerO)
+                        ->schema([
+                            Select::make('sauce')
+                                ->label('Pilih Saus')
+                                ->options([
+                                    'tartar' => 'Tar-Tar',
+                                    'marinara' => 'Marinara',
+                                    'cheese' => 'Cheese',
+                                    'mixed' => 'Mixed',
+                                ])
+                                ->required(),
+                        ]),
 
-                // STEP 4: Saus
-                Select::make('sauce')
-                    ->label('Pilih Saus')
-                    ->options([
-                        'tartar' => 'Tar-Tar',
-                        'marinara' => 'Marinara',
-                        'cheese' => 'Cheese',
-                        'mixed' => 'Mixed',
-                    ])
-                    ->required()
-                    ->visible(fn($get) => $get('step') === 4),
+                    Step::make('Checkout')
+                        ->icon(Heroicon::CreditCard)
+                        ->completedIcon(Heroicon::CheckCircle)
+                        ->schema([
+                            TextInput::make('customer_name')
+                                ->label('Nama Pelanggan')
+                                ->required(),
 
-                // STEP 5: Checkout
-                TextInput::make('customer_name')
-                    ->label('Nama Pelanggan')
-                    ->required()
-                    ->visible(fn($get) => $get('step') === 5),
+                            TextInput::make('total_price')
+                                ->label('Total Harga')
+                                ->numeric()
+                                ->prefix('Rp')
+                                ->required(),
 
-                TextInput::make('total_price')
-                    ->label('Total Harga')
-                    ->numeric()
-                    ->prefix('Rp')
-                    ->required()
-                    ->visible(fn($get) => $get('step') === 5),
-
-                Select::make('payment_method')
-                    ->label('Metode Pembayaran')
-                    ->options([
-                        'cash' => 'Cash',
-                        'qris' => 'QRIS',
-                        'transfer' => 'Transfer',
-                    ])
-                    ->required()
-                    ->visible(fn($get) => $get('step') === 5),
+                            Select::make('payment_method')
+                                ->label('Metode Pembayaran')
+                                ->options([
+                                    'cash' => 'Cash',
+                                    'qris' => 'QRIS',
+                                    'transfer' => 'Transfer',
+                                ])
+                                ->required(),
+                        ]),
+                ])
+                    ->submitAction(new HtmlString(Blade::render(<<<BLADE
+                        <x-filament::button
+                            type="submit"
+                            size="sm"
+                        >
+                            Buat Pesanan
+                        </x-filament::button>
+                    BLADE)))
             ]);
     }
 }
