@@ -28,8 +28,10 @@ class StandPanelProvider extends PanelProvider
             ->path('stand')
             ->login() 
             ->profile()
+            ->brandLogo(asset('images/logoTerraSnack.svg'))
+            ->brandLogoHeight('2.5rem')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Red,
             ])
             ->discoverResources(in: app_path('Filament/Stand/Resources'), for: 'App\Filament\Stand\Resources')
             ->discoverPages(in: app_path('Filament/Stand/Pages'), for: 'App\Filament\Stand\Pages')
