@@ -2,9 +2,9 @@
 
 namespace App\Filament\Stand\Resources\Orders\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Schema;
 
 class OrderForm
@@ -12,47 +12,71 @@ class OrderForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(2)
             ->components([
-                Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->default(null),
+                TextInput::make('customer_name')
+                    ->label('Atas Nama')
+                    ->placeholder('Nama pelanggan')
+                    ->required()
+                    ->columnSpanFull(),
+
                 Select::make('status')
+                    ->label('Status Pesanan')
                     ->options([
-            'pending' => 'Pending',
-            'processing' => 'Processing',
-            'completed' => 'Completed',
-            'cancelled' => 'Cancelled',
-        ])
+                        'pending' => 'Menunggu',
+                        'processing' => 'Diproses',
+                        'completed' => 'Selesai',
+                        'cancelled' => 'Dibatalkan',
+                    ])
                     ->default('pending')
                     ->required(),
+
                 Select::make('payment_status')
+                    ->label('Status Pembayaran')
                     ->options([
-            'unpaid' => 'Unpaid',
-            'pending_verification' => 'Pending verification',
-            'paid' => 'Paid',
-            'expired' => 'Expired',
-        ])
+                        'unpaid' => 'Belum Bayar',
+                        'pending_verification' => 'Menunggu Verifikasi',
+                        'paid' => 'Lunas',
+                        'expired' => 'Kadaluarsa',
+                    ])
                     ->default('unpaid')
                     ->required(),
+
                 TextInput::make('packaging_fee_per_item')
-                    ->required()
+                    ->label('Biaya Packaging per Item')
                     ->numeric()
-                    ->default(0.0),
+                    ->prefix('Rp')
+                    ->default(0.00)
+                    ->required(),
+
                 TextInput::make('packaging_fee_total')
-                    ->required()
+                    ->label('Total Biaya Packaging')
                     ->numeric()
-                    ->default(0.0),
+                    ->prefix('Rp')
+                    ->default(0.00)
+                    ->required(),
+
                 TextInput::make('total_price')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('gross_amount')
+                    ->label('Total Harga')
                     ->numeric()
-                    ->default(null),
+                    ->prefix('Rp')
+                    ->required(),
+
+                TextInput::make('gross_amount')
+                    ->label('Jumlah Kotor')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->nullable(),
+
                 TextInput::make('payment_method')
-                    ->default(null),
-                TextInput::make('payment_proof')
-                    ->default(null),
-                DateTimePicker::make('paid_at'),
+                    ->label('Metode Pembayaran')
+                    ->placeholder('Cash / QRIS / Transfer')
+                    ->nullable(),
+
+                DateTimePicker::make('paid_at')
+                    ->label('Dibayar Pada')
+                    ->nullable()
+                    ->seconds(false),
             ]);
     }
 }
