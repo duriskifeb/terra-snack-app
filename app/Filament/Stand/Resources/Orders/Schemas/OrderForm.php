@@ -19,6 +19,7 @@ class OrderForm
             ->columns(1)
             ->components([
                 Wizard::make([
+
                     Step::make('Pilih Produk')
                         ->icon(Heroicon::ShoppingBag)
                         ->schema([
@@ -28,11 +29,20 @@ class OrderForm
                                     'snack' => 'Snack',
                                     'drink' => 'Minuman',
                                 ])
-                                ->required(),
+                                ->required()
+                                ->live()
+                                ->afterStateUpdated(function ($state, callable $set) {
+                                    if ($state === 'drink') {
+                                        $set('vegetable', null);
+                                        $set('topping', null);
+                                        $set('sauce', null);
+                                    }
+                                }),
                         ]),
 
                     Step::make('Pilih Sayur')
                         ->icon('iconpark-vegetables-o')
+                        ->visible(fn($get) => $get('product') === 'snack')
                         ->schema([
                             Select::make('vegetable')
                                 ->label('Pilih Sayur (Opsional)')
@@ -43,11 +53,12 @@ class OrderForm
                                     'none' => 'Tidak pakai sayur',
                                 ])
                                 ->default('none')
-                                ->required(),
+                                ->nullable(),
                         ]),
 
                     Step::make('Pilih Topping')
                         ->icon('rpg-meat')
+                        ->visible(fn($get) => $get('product') === 'snack')
                         ->schema([
                             Select::make('topping')
                                 ->label('Pilih Topping')
@@ -58,11 +69,12 @@ class OrderForm
                                     'none' => 'Tidak pakai topping',
                                 ])
                                 ->default('none')
-                                ->required(),
+                                ->nullable(),
                         ]),
 
                     Step::make('Pilih Saus')
                         ->icon('iconpark-bottleone-o')
+                        ->visible(fn($get) => $get('product') === 'snack')
                         ->schema([
                             Select::make('sauce')
                                 ->label('Pilih Saus')
@@ -74,8 +86,10 @@ class OrderForm
                                     'none' => 'Tanpa saus',
                                 ])
                                 ->default('none')
-                                ->required(),
+                                ->nullable(),
                         ]),
+
+
                     Step::make('Checkout')
                         ->icon(Heroicon::CreditCard)
                         ->completedIcon(Heroicon::CheckCircle)
@@ -100,11 +114,8 @@ class OrderForm
                                 ->required(),
                         ]),
                 ])
-                ->submitAction(new HtmlString(Blade::render(<<<BLADE
-                    <x-filament::button
-                        type="submit"
-                        size="sm"
-                    >
+                    ->submitAction(new HtmlString(Blade::render(<<<BLADE
+                    <x-filament::button type="submit" size="sm">
                         Buat Pesanan
                     </x-filament::button>
                 BLADE))),
