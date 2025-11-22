@@ -26,11 +26,8 @@ class StandPanelProvider extends PanelProvider
         return $panel
             ->id('stand')
             ->path('stand')
-            ->login() // ✅ TAMBAHKAN INI
-            ->registration() // ✅ Opsional: jika mau ada registrasi
-            ->passwordReset() // ✅ Opsional: reset password
-            ->emailVerification() // ✅ Opsional: verifikasi email
-            ->profile() // ✅ Opsional: profile page
+            ->login() 
+            ->profile()
             ->colors([
                 'primary' => Color::Amber,
             ])
