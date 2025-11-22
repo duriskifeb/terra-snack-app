@@ -14,6 +14,7 @@ class Order extends Model
         'packaging_fee_total',
         'total_price',
         'status',
+        'customer_name',
         // 'gateway_ref',
         'gross_amount',
         'payment_status',
