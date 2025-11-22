@@ -32,7 +32,7 @@ class OrderForm
                         ]),
 
                     Step::make('Pilih Sayur')
-                        ->icon(Heroicon::Beaker) 
+                        ->icon('iconpark-vegetables-o') 
                         ->schema([
                             Select::make('vegetable')
                                 ->label('Pilih Sayur (Opsional)')
@@ -45,7 +45,7 @@ class OrderForm
                         ]),
 
                     Step::make('Pilih Topping')
-                        ->icon(Heroicon::Sparkles)
+                        ->icon('rpg-meat')
                         ->schema([
                             Select::make('topping')
                                 ->label('Pilih Topping')
@@ -58,7 +58,7 @@ class OrderForm
                         ]),
 
                     Step::make('Pilih Saus')
-                        ->icon(Heroicon::Beaker) 
+                        ->icon('iconpark-bottleone-o') 
                         ->schema([
                             Select::make('sauce')
                                 ->label('Pilih Saus')
