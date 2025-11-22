@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Filament\Stand\Resources\Checkouts;
+
+use App\Filament\Stand\Resources\Checkouts\Pages\CreateCheckout;
+use App\Filament\Stand\Resources\Checkouts\Pages\EditCheckout;
+use App\Filament\Stand\Resources\Checkouts\Pages\ListCheckouts;
+use App\Filament\Stand\Resources\Checkouts\Schemas\CheckoutForm;
+use App\Filament\Stand\Resources\Checkouts\Tables\CheckoutsTable;
+use App\Models\Checkout;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class CheckoutResource extends Resource
+{
+    protected static ?string $model = Checkout::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return CheckoutForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return CheckoutsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListCheckouts::route('/'),
+            'create' => CreateCheckout::route('/create'),
+            'edit' => EditCheckout::route('/{record}/edit'),
+        ];
+    }
+}
