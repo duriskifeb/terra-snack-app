@@ -11,7 +11,6 @@ class CheckoutForm
         return $schema
             ->components([
                 //
-                // test
             ]);
     }
 }

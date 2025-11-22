@@ -7,7 +7,6 @@ use App\Filament\Stand\Resources\Checkouts\Pages\EditCheckout;
 use App\Filament\Stand\Resources\Checkouts\Pages\ListCheckouts;
 use App\Filament\Stand\Resources\Checkouts\Schemas\CheckoutForm;
 use App\Filament\Stand\Resources\Checkouts\Tables\CheckoutsTable;
-// use App\Models\Checkout;
 use App\Models\Order;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -33,17 +32,15 @@ class CheckoutResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListCheckouts::route('/'),
+            'index'  => ListCheckouts::route('/'),
             'create' => CreateCheckout::route('/create'),
-            'edit' => EditCheckout::route('/{record}/edit'),
+            'edit'   => EditCheckout::route('/{record}/edit'),
         ];
     }
 }
