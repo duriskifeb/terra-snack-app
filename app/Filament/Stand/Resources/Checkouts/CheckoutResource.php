@@ -19,7 +19,7 @@ class CheckoutResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'gmdi-shopping-cart-checkout-o';
 
     protected static ?string $navigationLabel = 'Checkouts';
     protected static ?string $pluralLabel = 'Checkouts';
