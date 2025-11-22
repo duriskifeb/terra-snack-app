@@ -20,15 +20,15 @@ class CartResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    // public static function form(Schema $schema): Schema
-    // {
-    //     return CartForm::configure($schema);
-    // }
+    public static function form(Schema $schema): Schema
+    {
+        return CartForm::configure($schema);
+    }
 
-    // public static function table(Table $table): Table
-    // {
-    //     return CartsTable::configure($table);
-    // }
+    public static function table(Table $table): Table
+    {
+        return CartsTable::configure($table);
+    }
 
     public static function getRelations(): array
     {
@@ -40,9 +40,9 @@ class CartResource extends Resource
     public static function getPages(): array
     {
         return [
-            // 'index' => ListCarts::route('/'),
-            // 'create' => CreateCart::route('/create'),
-            // 'edit' => EditCart::route('/{record}/edit'),
+            'index' => ListCarts::route('/'),
+            'create' => CreateCart::route('/create'),
+            'edit' => EditCart::route('/{record}/edit'),
         ];
     }
 }
