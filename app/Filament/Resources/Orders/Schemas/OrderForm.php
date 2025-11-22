@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Orders\Schemas;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Schema;
 
 class OrderForm
@@ -11,38 +12,15 @@ class OrderForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(2)
             ->components([
-                Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->label('Pelanggan')
-                    ->placeholder('Pilih pelanggan')
-                    ->searchable()
-                    ->preload()
-                    ->default(null),
-                    
-                TextInput::make('packaging_fee_per_item')
-                    ->label('Biaya Packaging per Item')
+
+                TextInput::make('customer_name')
+                    ->label('Atas Nama')
+                    ->placeholder('Nama pelanggan')
                     ->required()
-                    ->numeric()
-                    ->prefix('Rp')
-                    ->default(0.0)
-                    ->helperText('Biaya packaging untuk setiap item'),
-                    
-                TextInput::make('packaging_fee_total')
-                    ->label('Total Biaya Packaging')
-                    ->required()
-                    ->numeric()
-                    ->prefix('Rp')
-                    ->default(0.0)
-                    ->helperText('Total biaya packaging untuk semua item'),
-                    
-                TextInput::make('total_price')
-                    ->label('Total Harga')
-                    ->required()
-                    ->numeric()
-                    ->prefix('Rp')
-                    ->helperText('Total harga termasuk produk dan packaging'),
-                    
+                    ->columnSpanFull(),
+
                 Select::make('status')
                     ->label('Status Pesanan')
                     ->options([
@@ -52,40 +30,54 @@ class OrderForm
                         'cancelled' => 'Dibatalkan',
                     ])
                     ->default('pending')
-                    ->required()
-                    ->helperText('Status pesanan saat ini'),
-                    
-                TextInput::make('gateway_ref')
-                    ->label('Referensi Pembayaran')
-                    ->placeholder('Contoh: TRX-123456')
-                    ->default(null)
-                    ->helperText('Referensi dari gateway pembayaran'),
-                    
-                TextInput::make('gross_amount')
-                    ->label('Jumlah Kotor')
-                    ->numeric()
-                    ->prefix('Rp')
-                    ->default(null)
-                    ->helperText('Jumlah sebelum potongan/pajak'),
-                    
+                    ->required(),
+
                 Select::make('payment_status')
                     ->label('Status Pembayaran')
                     ->options([
                         'unpaid' => 'Belum Bayar',
-                        'pending_payment' => 'Menunggu Pembayaran',
+                        'pending_verification' => 'Menunggu Verifikasi',
                         'paid' => 'Lunas',
                         'expired' => 'Kadaluarsa',
-                        'failed' => 'Gagal',
                     ])
                     ->default('unpaid')
-                    ->required()
-                    ->helperText('Status pembayaran pesanan'),
-                    
+                    ->required(),
+
+                TextInput::make('packaging_fee_per_item')
+                    ->label('Biaya Packaging per Item')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->default(0.00)
+                    ->required(),
+
+                TextInput::make('packaging_fee_total')
+                    ->label('Total Biaya Packaging')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->default(0.00)
+                    ->required(),
+
+                TextInput::make('total_price')
+                    ->label('Total Harga')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->required(),
+
+                TextInput::make('gross_amount')
+                    ->label('Jumlah Kotor')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->nullable(),
+
                 TextInput::make('payment_method')
                     ->label('Metode Pembayaran')
-                    ->placeholder('Contoh: Cash, QRIS, Transfer')
-                    ->default(null)
-                    ->helperText('Metode pembayaran yang digunakan'),
+                    ->placeholder('Cash / QRIS / Transfer')
+                    ->nullable(),
+
+                DateTimePicker::make('paid_at')
+                    ->label('Dibayar Pada')
+                    ->nullable()
+                    ->seconds(false),
             ]);
     }
 }
