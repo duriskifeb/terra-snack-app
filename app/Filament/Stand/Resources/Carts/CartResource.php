@@ -18,7 +18,7 @@ class CartResource extends Resource
 {
     protected static ?string $model = Cart::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'ionicon-cart-outline';
 
     public static function form(Schema $schema): Schema
     {
