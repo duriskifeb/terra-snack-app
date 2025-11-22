@@ -32,16 +32,18 @@ class OrderForm
                         ]),
 
                     Step::make('Pilih Sayur')
-                        ->icon('iconpark-vegetables-o') 
+                        ->icon('iconpark-vegetables-o')
                         ->schema([
                             Select::make('vegetable')
                                 ->label('Pilih Sayur (Opsional)')
                                 ->options([
-                                    'tomato' => 'Tomato',
+                                    'tomato' => 'Tomat',
                                     'cucumber' => 'Timun',
                                     'sawi' => 'Sawi',
+                                    'none' => 'Tidak pakai sayur',
                                 ])
-                                ->nullable(),
+                                ->default('none')
+                                ->required(),
                         ]),
 
                     Step::make('Pilih Topping')
@@ -53,12 +55,14 @@ class OrderForm
                                     'mix_beef' => 'Mix Beef',
                                     'mix_chicken' => 'Mix Chicken',
                                     'mix_beef_chicken' => 'Mix Beef & Chicken',
+                                    'none' => 'Tidak pakai topping',
                                 ])
+                                ->default('none')
                                 ->required(),
                         ]),
 
                     Step::make('Pilih Saus')
-                        ->icon('iconpark-bottleone-o') 
+                        ->icon('iconpark-bottleone-o')
                         ->schema([
                             Select::make('sauce')
                                 ->label('Pilih Saus')
@@ -67,10 +71,11 @@ class OrderForm
                                     'marinara' => 'Marinara',
                                     'cheese' => 'Cheese',
                                     'mixed' => 'Mixed',
+                                    'none' => 'Tanpa saus',
                                 ])
+                                ->default('none')
                                 ->required(),
                         ]),
-
                     Step::make('Checkout')
                         ->icon(Heroicon::CreditCard)
                         ->completedIcon(Heroicon::CheckCircle)
@@ -95,14 +100,14 @@ class OrderForm
                                 ->required(),
                         ]),
                 ])
-                    ->submitAction(new HtmlString(Blade::render(<<<BLADE
-                        <x-filament::button
-                            type="submit"
-                            size="sm"
-                        >
-                            Buat Pesanan
-                        </x-filament::button>
-                    BLADE)))
+                ->submitAction(new HtmlString(Blade::render(<<<BLADE
+                    <x-filament::button
+                        type="submit"
+                        size="sm"
+                    >
+                        Buat Pesanan
+                    </x-filament::button>
+                BLADE))),
             ]);
     }
 }
