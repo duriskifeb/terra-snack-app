@@ -42,7 +42,7 @@ class OrderSeeder extends Seeder
             $randomDays = rand(1, 90);
             $orderDate = Carbon::now()->subDays($randomDays);
             $grossAmount = 0; 
-            $packagingFeePerItem = 2500;
+            $packagingFeePerItem = 1000;
             $totalItems = 0;
             $itemsCount = rand(1, 3);
             $orderedProducts = $products->random($itemsCount); 
