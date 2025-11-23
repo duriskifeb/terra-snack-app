@@ -2,7 +2,6 @@
 
 namespace App\Filament\Stand\Resources\Checkouts;
 
-use App\Filament\Stand\Resources\Checkouts\Pages\CreateCheckout;
 use App\Filament\Stand\Resources\Checkouts\Pages\EditCheckout;
 use App\Filament\Stand\Resources\Checkouts\Pages\ListCheckouts;
 use App\Filament\Stand\Resources\Checkouts\Schemas\CheckoutForm;
@@ -11,7 +10,6 @@ use App\Models\Order;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -21,13 +19,11 @@ class CheckoutResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'gmdi-shopping-cart-checkout-o';
 
-    protected static ?string $navigationLabel = 'Checkouts';
-    protected static ?string $pluralLabel = 'Checkouts';
-    protected static ?string $modelLabel = 'Checkout';
-
-    // untuk buat grup sidebar
-    // protected static string|UnitEnum|null $navigationGroup = 'Order Management';
-
+    protected static ?string $navigationLabel = 'Daftar Pesanan';
+    protected static ?string $pluralLabel = 'Daftar Pesanan';
+    protected static ?string $modelLabel = 'Pesanan';
+    protected static ?int $navigationSort = 3;
+    // protected static string|UnitEnum|null $navigationGroup = 'Manajemen Pesanan';
 
     public static function form(Schema $schema): Schema
     {
@@ -47,9 +43,15 @@ class CheckoutResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => ListCheckouts::route('/'),
-            'create' => CreateCheckout::route('/create'),
-            'edit'   => EditCheckout::route('/{record}/edit'),
+            'index' => ListCheckouts::route('/'),
+            'edit' => EditCheckout::route('/{record}/edit'),
+            // 'create' => CreateCheckout::route('/create'), ← HAPUS INI
         ];
+    }
+    
+    // Disable create button
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }
