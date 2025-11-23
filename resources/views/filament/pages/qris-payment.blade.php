@@ -8,9 +8,6 @@
     </div>
 
     <div class="text-center space-y-2">
-        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Order #{{ $order_id }}
-        </p>
         <p class="text-2xl font-bold text-primary-600 dark:text-primary-400">
             Rp {{ number_format($total, 0, ',', '.') }}
         </p>
