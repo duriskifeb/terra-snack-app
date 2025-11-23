@@ -3,7 +3,10 @@
 namespace App\Filament\Stand\Resources\Orders\Pages;
 
 use App\Filament\Stand\Resources\Orders\OrderResource;
+use App\Models\Order;
 use App\Models\OrderItem;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,6 +35,9 @@ class CreateOrder extends CreateRecord
         $data['gross_amount'] = $data['total_price'];
         $data['packaging_fee_per_item'] = 0;
         $data['packaging_fee_total'] = 0;
+
+        // Simpan payment method untuk cek nanti
+        $this->paymentMethod = $data['payment_method'] ?? 'cash';
 
         // Hapus items dari data karena bukan field di table orders
         unset($data['items']);
@@ -62,6 +68,62 @@ class CreateOrder extends CreateRecord
         }
 
         return $order;
+    }
+
+    protected function afterCreate(): void
+    {
+        $order = $this->getRecord();
+
+        // Jika payment method QRIS, tampilkan modal
+        if ($this->paymentMethod === 'qris') {
+            $this->halt();
+            $this->mountAction('confirmQrisPayment');
+        } else {
+            // Redirect langsung untuk payment method lain
+            Notification::make()
+                ->title('Pesanan berhasil dibuat!')
+                ->success()
+                ->send();
+        }
+    }
+
+    protected function getActions(): array
+    {
+        return [
+            Action::make('confirmQrisPayment')
+                ->modalHeading('Scan QRIS untuk Pembayaran')
+                ->modalDescription(function () {
+                    $order = $this->getRecord();
+                    return 'Total Pembayaran: Rp ' . number_format($order?->total_price ?? 0, 0, ',', '.');
+                })
+                ->modalContent(function () {
+                    $order = $this->getRecord();
+                    return view('filament.pages.qris-payment', [
+                        'order_id' => $order?->id ?? 0,
+                        'total' => $order?->total_price ?? 0,
+                    ]);
+                })
+                ->modalSubmitActionLabel('Sudah Scan & Bayar')
+                ->modalCancelActionLabel('Batalkan')
+                ->modalWidth('lg')
+                ->action(function () {
+                    // Update order status menjadi paid
+                    $order = $this->getRecord();
+                    
+                    if ($order) {
+                        $order->update([
+                            'payment_status' => 'paid',
+                            'paid_at' => now(),
+                        ]);
+
+                        Notification::make()
+                            ->title('Pembayaran QRIS berhasil!')
+                            ->success()
+                            ->send();
+                    }
+                })
+                ->closeModalByClickingAway(false),
+        ];
     }
 
     protected function generateProductName(array $item): string
@@ -95,4 +157,5 @@ class CreateOrder extends CreateRecord
     }
 
     private array $cachedItems = [];
+    private string $paymentMethod = 'cash';
 }
