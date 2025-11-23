@@ -57,13 +57,13 @@
                 </p>
 
                 <span class="px-3 py-1 text-xs font-semibold rounded-full inline-flex items-center gap-1
-                                bg-green-100 text-green-700 border border-green-200">
+                                        bg-green-100 text-green-700 border border-green-200">
                     <i class="fa-solid fa-circle-check"></i>
                     Pembayaran Berhasil
                 </span>
             @else
                 <span class="px-3 py-1 text-xs font-semibold rounded-full inline-flex items-center gap-1
-                                bg-gray-200 text-gray-700 border border-gray-300">
+                                        bg-gray-200 text-gray-700 border border-gray-300">
                     <i class="fa-solid fa-clock"></i>
                     Belum Dibayar
                 </span>
@@ -71,10 +71,23 @@
 
         </x-order.card>
 
+        <x-order.card>
+            <x-order.label icon="fa-solid fa-map">Pickup Location</x-order.label>
+            <div>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    Jl. Ketintang No.156, Ketintang, <br> Kec. Gayungan, Surabaya, Jawa Timur 60231
+                </p>
+            </div>
+            <a href="https://maps.google.com/?q=Jl.+Ketintang+No.156,+Ketintang,+Surabaya" target="_blank"
+                class="mt-4 flex items-center justify-center gap-2 w-full bg-gray-100 text-gray-700 py-2 rounded-lg text-xs font-semibold hover:bg-gray-200 transition">
+                <i class="fa-solid fa-map"></i> Buka di Peta
+            </a>
+        </x-order.card>
+
         @if ($order->payment_status === 'unpaid')
             <div class="sm:col-span-2 flex justify-center mt-4">
                 <a href="{{ route('customer-history.upload-proof', $order->id) }}" wire:navigate class="bg-[#E13220] text-white px-6 py-2 rounded-lg font-semibold shadow
-                                   hover:bg-red-700 transition inline-flex items-center gap-2">
+                                           hover:bg-red-700 transition inline-flex items-center gap-2">
 
                     <i class="fa-solid fa-upload"></i>
                     Upload Bukti Pembayaran
