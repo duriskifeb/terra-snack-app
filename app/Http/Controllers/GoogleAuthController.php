@@ -7,6 +7,7 @@ use Auth;
 use Exception;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
+use Str;
 
 class GoogleAuthController extends Controller
 {
@@ -15,7 +16,7 @@ class GoogleAuthController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
-     public function callback()
+    public function callback()
     {
         try {
             $googleUser = Socialite::driver('google')->user();
@@ -36,7 +37,7 @@ class GoogleAuthController extends Controller
                         'email' => $googleUser->getEmail(),
                         'google_id' => $googleUser->getId(),
                         'avatar' => $googleUser->getAvatar(),
-                        'password' => null, 
+                        'password' => bcrypt(Str::random(20)),
                     ]);
                 }
             }
@@ -44,9 +45,10 @@ class GoogleAuthController extends Controller
             Auth::login($user);
 
             return redirect('/products')->with('success', 'Login Google berhasil, selamat datang!');
-        
+
         } catch (Exception $e) {
-            return redirect('/login')->with('error', 'Google login gagal, silakan coba lagi.');
+            return redirect('/login')->with('error',  $e->getMessage(),);
+
         }
     }
 }

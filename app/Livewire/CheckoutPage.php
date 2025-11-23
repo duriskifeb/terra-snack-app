@@ -81,7 +81,6 @@ class CheckoutPage extends Component
             ->with(['items.optionValues.customizationOption'])
             ->first();
 
-        // If no existing unpaid order, create and sync items
         if (!$this->order) {
             $this->order = Order::create([
                 'user_id' => $user->id,

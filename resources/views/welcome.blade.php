@@ -4,13 +4,12 @@
         <img src="{{ asset('images/logoTerraSnack.svg') }}" alt="Terra Snack Logo" class="mx-auto w-24 mb-2">
         
         <h1 class="text-2xl font-bold text-amber-700 font-inter">
-            Selamat Datang di Terra Snack
+            Selamat Datang di <br> Terra Snack
         </h1>
         <p class="text-sm text-gray-500">
-            Nikmati camilan lezat dengan akunmu 
+            Nikmati camilan lezat sesuai preferensi anda! 
         </p>
     </div>
-
     <div class="mt-8 flex flex-col items-center space-y-4">
         
         <a href="{{ route('login') }}" 

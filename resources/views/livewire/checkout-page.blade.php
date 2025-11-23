@@ -66,8 +66,8 @@
                         <h3 class="font-bold text-gray-800 mb-4">Pembayaran (QRIS)</h3>
 
                         <div class="flex flex-col items-center mb-6">
-                            <img src="{{ asset('assets/qris_dana.jpeg') }}" alt="QRIS"
-                                class="w-48 h-48 object-contain border-2 border-dashed border-gray-200 rounded-xl p-2">
+                            <img src="{{ asset('assets/qris.jpeg') }}" alt="QRIS"
+                                class="object-contain border-2 border-dashed border-gray-200 rounded-xl p-2">
                             <p class="text-xs text-gray-400 mt-2">Scan QRIS di atas untuk membayar</p>
                         </div>
 

@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->decimal('packaging_fee_per_item', 10, 2)->default(0.00);
             $table->decimal('packaging_fee_total', 10, 2)->default(0.00);
-            $table->decimal('total_price', 10, 2);
+            $table->decimal('total_price', 10, 2)->default(0);
             $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
             $table->decimal('gross_amount', 10, 2)->nullable();
             $table->enum('payment_status', ['unpaid', 'pending_verification',  'paid'])->default('unpaid');
