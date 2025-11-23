@@ -14,10 +14,10 @@ class CheckoutsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->sortable()
-                    ->searchable(),
+                // TextColumn::make('id')
+                //     ->label('ID')
+                //     ->sortable()
+                //     ->searchable(),
 
                 TextColumn::make('customer_name')
                     ->label('Nama Pelanggan')
