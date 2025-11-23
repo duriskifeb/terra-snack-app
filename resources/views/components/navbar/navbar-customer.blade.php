@@ -1,4 +1,4 @@
-<nav class="w-full mt-4" x-data="{ open: false }" wire:ignore>
+<nav class=" w-full mt-4" x-data="{ open: false }" wire:ignore>
     <div class="max-w-content mx-auto px-mobile-gutter">
         <ul class="flex justify-between items-center">
             <li>
@@ -57,12 +57,12 @@
                         <span>Riwayat Transaksi</span>
                     </a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
                         <i class="fa-solid fa-user text-[#E13220] w-6 text-center"></i>
                         <span>Akun</span>
                     </a>
-                </li>
+                </li> --}}
 
                 <li class="mt-8 border-t pt-6">
                     <form method="POST" action="{{ route('logout') }}">

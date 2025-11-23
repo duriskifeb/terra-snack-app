@@ -24,12 +24,50 @@ class CheckoutPage extends Component
 
     public $paymentProof;
 
+    protected $listeners = ['cartUpdated' => 'refreshOrderFromCart'];
+
+    private function rebuildOrderFromCart($cart)
+    {
+        $this->subtotal = $cart->items->sum('subtotal');
+
+        $packagingFeePerItem = 1000;
+        $this->packagingFeeTotal = $cart->items->sum('quantity') * $packagingFeePerItem;
+
+        $this->totalPrice = $this->subtotal + $this->packagingFeeTotal;
+
+        $this->order->items()->delete();
+
+        foreach ($cart->items as $item) {
+            $orderItem = $this->order->items()->create([
+                'product_id' => $item->product_id,
+                'product_name' => $item->product->name,
+                'quantity' => $item->quantity,
+                'unit_price' => $item->unit_price,
+                'subtotal' => $item->subtotal,
+            ]);
+
+            $orderItem->optionValues()->attach($item->optionValues->pluck('id'));
+        }
+
+        $this->order->update([
+            'packaging_fee_total' => $this->packagingFeeTotal,
+            'total_price' => $this->totalPrice,
+        ]);
+
+        $this->order = $this->order->fresh([
+            'items',
+            'items.product',
+            'items.optionValues',
+            'items.optionValues.customizationOption'
+        ]);
+    }
+
+
     public function mount()
     {
         $user = Auth::user();
-        if (!$user) {
+        if (!$user)
             return redirect()->route('login');
-        }
 
         $this->cart = $user->cart()->with('items.product', 'items.optionValues')->first();
 
@@ -38,52 +76,48 @@ class CheckoutPage extends Component
             return $this->redirect(route('products.list'));
         }
 
-        $this->subtotal = $this->cart->items->sum('subtotal');
-        $itemCount = $this->cart->items->sum('quantity');
-        $packagingFeePerItem = 1000;
-        $this->packagingFeeTotal = $itemCount * $packagingFeePerItem;
-        $this->totalPrice = $this->subtotal + $this->packagingFeeTotal;
-
         $this->order = Order::where('user_id', $user->id)
             ->where('payment_status', 'unpaid')
             ->with(['items.optionValues.customizationOption'])
             ->first();
 
+        // If no existing unpaid order, create and sync items
         if (!$this->order) {
-            DB::transaction(function () use ($user) {
-                $newOrder = Order::create([
-                    'user_id' => $user->id,
-                    'packaging_fee_total' => $this->packagingFeeTotal,
-                    'total_price' => $this->totalPrice,
-                    'status' => 'pending',
-                    'payment_status' => 'unpaid',
-                    'payment_method' => 'QRIS Statis',
-                ]);
-
-                foreach ($this->cart->items as $item) {
-                    $orderItem = $newOrder->items()->create([
-                        'product_id' => $item->product_id,
-                        'product_name' => $item->product->name,
-                        'quantity' => $item->quantity,
-                        'unit_price' => $item->unit_price,
-                        'subtotal' => $item->subtotal,
-                    ]);
-
-                    $orderItem->optionValues()->attach($item->optionValues->pluck('id'));
-                }
-
-                $this->order = $newOrder->fresh([
-                    'items',
-                    'items.product',
-                    'items.optionValues',
-                    'items.optionValues.customizationOption'
-                ]);
-
-
-                $this->cart->items()->delete();
-                $this->cart->refresh();
-            });
+            $this->order = Order::create([
+                'user_id' => $user->id,
+                'status' => 'pending',
+                'payment_status' => 'unpaid',
+                'payment_method' => 'QRIS Statis',
+            ]);
         }
+
+        DB::transaction(function () {
+            $this->rebuildOrderFromCart($this->cart);
+            $this->cart->items()->delete();
+            $this->cart->refresh();
+        });
+    }
+
+
+    public function refreshOrderFromCart()
+    {
+        if (!$this->order || $this->order->payment_status !== 'unpaid')
+            return;
+
+        $cart = Auth::user()->cart()->with('items.product', 'items.optionValues')->first();
+
+        if (!$cart || $cart->items->isEmpty()) {
+            $this->order->items()->delete();
+            $this->order->update(['total_price' => 0]);
+            $this->dispatch('show-error', 'Keranjang sudah kosong.');
+            $this->dispatch('$refresh');
+            return;
+        }
+
+        DB::transaction(fn() => $this->rebuildOrderFromCart($cart));
+
+        $this->dispatch('$refresh');
+        $this->dispatch('show-success', 'Checkout diperbarui mengikuti perubahan keranjang.');
     }
 
     public function uploadPaymentProof()

@@ -31,7 +31,7 @@
                 <a href="{{ route('customer-history.detail', ['orderId' => $order->id]) }}"
                     class=" p-6  shadow rounded-lg flex flex-col gap-12  duration-300 hover:bg-red-600 group font-semibold group-hover:text-white">
                     <div class="space-y-4">
-                        <p class="font-bold group-hover:text-white  text-xl text-gray-800">Order #{{ $order->id }}</p>
+                        <p class="font-bold group-hover:text-white  text-lg text-gray-800">Order #{{ $order->id }}</p>
 
                         <p class="text-sm text-gray-600 group-hover:text-white">
                             Status Pesanan:
@@ -63,12 +63,12 @@
                             Dibuat: {{ \Carbon\Carbon::parse($order->created_at)->format('d M Y H:i') }}
                         </p>
 
-                        <p class="text-2xl text-gray-600 group-hover:text-white">
+                        <p class="text-xl text-gray-600 group-hover:text-white">
                             Total: <span class="font-semibold">Rp
                                 {{ number_format($order->total_price, 0, ',', '.') }}</span>
                         </p>
 
-                        <button class="bg-red-600 py-2 font-semibold group-hover:text-red-500 group-hover:bg-white rounded-full flex justify-center items-center text-white w-full">
+                        <button class="bg-red-600 py-2 text-sm font-semibold group-hover:text-red-500 group-hover:bg-white rounded-full flex justify-center items-center text-white w-full">
                             Lihat Detail
                         </button>
                     </div>
