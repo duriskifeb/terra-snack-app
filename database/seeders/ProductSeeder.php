@@ -19,14 +19,14 @@ class ProductSeeder extends Seeder
             return;
         }
 
-        $minumanProducts = [
-            [
-                'name' => 'Air Putih',
-                'price' => 5000,
-                'description' => 'Air putih mineral segar',
-                'category_id' => $minumanCategory->id,
-            ]
-        ];
+        // $minumanProducts = [
+        //     [
+        //         'name' => 'Air Putih',
+        //         'price' => 5000,
+        //         'description' => 'Air putih mineral segar',
+        //         'category_id' => $minumanCategory->id,
+        //     ]
+        // ];
 
         $snackProducts = [
             [
@@ -61,7 +61,7 @@ class ProductSeeder extends Seeder
             ]
         ];
 
-        $allProducts = array_merge($minumanProducts, $snackProducts);
+        $allProducts = array_merge( $snackProducts);
 
         foreach ($allProducts as $product) {
             Product::firstOrCreate(
