@@ -74,6 +74,9 @@ class CreateOrder extends CreateRecord
     {
         $order = $this->getRecord();
 
+        // Simpan order ke property untuk diakses di modal
+        $this->createdOrder = $order;
+
         // Jika payment method QRIS, tampilkan modal
         if ($this->paymentMethod === 'qris') {
             $this->halt();
@@ -93,11 +96,11 @@ class CreateOrder extends CreateRecord
             Action::make('confirmQrisPayment')
                 ->modalHeading('Scan QRIS untuk Pembayaran')
                 ->modalDescription(function () {
-                    $order = $this->getRecord();
+                    $order = $this->createdOrder ?? $this->getRecord();
                     return 'Total Pembayaran: Rp ' . number_format($order?->total_price ?? 0, 0, ',', '.');
                 })
                 ->modalContent(function () {
-                    $order = $this->getRecord();
+                    $order = $this->createdOrder ?? $this->getRecord();
                     return view('filament.pages.qris-payment', [
                         'order_id' => $order?->id ?? 0,
                         'total' => $order?->total_price ?? 0,
@@ -108,7 +111,7 @@ class CreateOrder extends CreateRecord
                 ->modalWidth('lg')
                 ->action(function () {
                     // Update order status menjadi paid
-                    $order = $this->getRecord();
+                    $order = $this->createdOrder ?? $this->getRecord();
                     
                     if ($order) {
                         $order->update([
@@ -158,4 +161,5 @@ class CreateOrder extends CreateRecord
 
     private array $cachedItems = [];
     private string $paymentMethod = 'cash';
+    private ?Order $createdOrder = null;
 }
