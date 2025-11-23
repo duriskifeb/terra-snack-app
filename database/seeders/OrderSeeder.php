@@ -19,9 +19,17 @@ class OrderSeeder extends Seeder
         $products = Product::all();
         
         $paymentMethods = ['QRIS', 'Transfer Bank', 'Kartu Debit'];
-
         $paymentStatuses = ['paid', 'unpaid', 'pending_verification', 'expired']; 
         $orderStatuses = ['completed', 'processing', 'cancelled', 'pending'];
+        $customers = Customer::all();
+        $customerNames = $customers->pluck('name')->toArray();
+        if (empty($customerNames)) {
+            $customerNames = [
+                'Walk-in Customer',
+                'Guest Customer',
+                'Anonymous',
+            ];
+        }
         
         if ($users->isEmpty() || $products->isEmpty()) {
             $this->command->error('❌ Gagal: Data dasar (User, Product) tidak lengkap.');
@@ -53,6 +61,7 @@ class OrderSeeder extends Seeder
 
             $order = Order::create([
                 'user_id' => $users->random()->id,
+                'customer_name' => $customerNames[array_rand($customerNames)], 
                 'packaging_fee_per_item' => $packagingFeePerItem,
                 'packaging_fee_total' => $packagingFeeTotal,
                 'total_price' => $totalPrice, 
