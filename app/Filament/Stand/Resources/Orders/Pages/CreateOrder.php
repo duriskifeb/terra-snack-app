@@ -73,16 +73,11 @@ class CreateOrder extends CreateRecord
     protected function afterCreate(): void
     {
         $order = $this->getRecord();
-
-        // Simpan order ke property untuk diakses di modal
         $this->createdOrder = $order;
-
-        // Jika payment method QRIS, tampilkan modal
         if ($this->paymentMethod === 'qris') {
             $this->halt();
             $this->mountAction('confirmQrisPayment');
         } else {
-            // Redirect langsung untuk payment method lain
             Notification::make()
                 ->title('Pesanan berhasil dibuat!')
                 ->success()
@@ -110,7 +105,6 @@ class CreateOrder extends CreateRecord
                 ->modalCancelActionLabel('Batalkan')
                 ->modalWidth('lg')
                 ->action(function () {
-                    // Update order status menjadi paid
                     $order = $this->createdOrder ?? $this->getRecord();
                     
                     if ($order) {
@@ -131,27 +125,21 @@ class CreateOrder extends CreateRecord
 
     protected function generateProductName(array $item): string
     {
-        $type = $item['product_type'] ?? 'Item';
+        $parts = ['Snack'];
         
-        if ($type === 'snack') {
-            $parts = [ucfirst($type)];
-            
-            if (!empty($item['vegetable']) && $item['vegetable'] !== 'none') {
-                $parts[] = ucfirst($item['vegetable']);
-            }
-            
-            if (!empty($item['topping']) && $item['topping'] !== 'none') {
-                $parts[] = ucfirst($item['topping']);
-            }
-            
-            if (!empty($item['sauce']) && $item['sauce'] !== 'none') {
-                $parts[] = ucfirst($item['sauce']);
-            }
-            
-            return implode(' - ', $parts);
+        if (!empty($item['vegetable']) && $item['vegetable'] !== 'none') {
+            $parts[] = ucfirst($item['vegetable']);
         }
         
-        return ucfirst($type);
+        if (!empty($item['topping']) && $item['topping'] !== 'none') {
+            $parts[] = ucfirst($item['topping']);
+        }
+        
+        if (!empty($item['sauce']) && $item['sauce'] !== 'none') {
+            $parts[] = ucfirst($item['sauce']);
+        }
+        
+        return implode(' - ', $parts);
     }
 
     protected function getRedirectUrl(): string
