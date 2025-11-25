@@ -2,128 +2,77 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\CustomizationOption;
-use App\Models\OptionValue;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $snackCategory = Category::create([
-            'name' => 'Snack',
-            'slug' => Str::slug('Snack'),
-        ]);
+        $snackCategory = Category::where('slug', 'snack')->first();
+        $minumanCategory = Category::where('slug', 'minuman')->first();
 
-        $drinkCategory = Category::create([
-            'name' => 'Minuman',
-            'slug' => Str::slug('Minuman'),
-        ]);
+        if (!$snackCategory || !$minumanCategory) {
+            $this->command->error('❌ Gagal: Kategori Snack atau Minuman belum dibuat.');
+            return;
+        }
 
-        $sizeOption = CustomizationOption::create([
-            'name' => 'Size',
-            'type' => 'select',
-        ]);
+        // $minumanProducts = [
+        //     [
+        //         'name' => 'Air Putih',
+        //         'price' => 5000,
+        //         'description' => 'Air putih mineral segar',
+        //         'category_id' => $minumanCategory->id,
+        //     ]
+        // ];
 
-        $toppingOption = CustomizationOption::create([
-            'name' => 'Topping',
-            'type' => 'checkbox',
-        ]);
-
-        $sugarOption = CustomizationOption::create([
-            'name' => 'Sugar Level',
-            'type' => 'radio',
-        ]);
-
-        $sizeSmall = OptionValue::create([
-            'customization_option_id' => $sizeOption->id,
-            'name' => 'Small',
-            'details' => ['Portion' => '100g', 'Calories' => '200 kcal'],
-            'price_modifier' => 0.00,
-        ]);
-
-        $sizeLarge = OptionValue::create([
-            'customization_option_id' => $sizeOption->id,
-            'name' => 'Large',
-            'details' => ['Portion' => '200g', 'Calories' => '400 kcal'],
-            'price_modifier' => 5.00,
-        ]);
-
-        $toppingChoco = OptionValue::create([
-            'customization_option_id' => $toppingOption->id,
-            'name' => 'Chocolate Chips',
-            'details' => ['Flavor' => 'Sweet', 'Texture' => 'Crunchy'],
-            'price_modifier' => 2.00,
-        ]);
-
-        $sugarNormal = OptionValue::create([
-            'customization_option_id' => $sugarOption->id,
-            'name' => 'Normal',
-            'details' => ['Sweetness' => 'Regular'],
-            'price_modifier' => 0.00,
-        ]);
-
-
-        $sugarLess = OptionValue::create([
-            'customization_option_id' => $sugarOption->id,
-            'name' => 'Less Sugar',
-            'price_modifier' => 0.00,
-        ]);
-
-    
-        $products = [
+        $snackProducts = [
             [
+                'name' => 'Chitato Sapi Panggang',
+                'price' => 20000,
+                'description' => 'Keripik kentang rasa sapi panggang',
                 'category_id' => $snackCategory->id,
-                'name' => 'Choco Crunch',
-                'slug' => 'choco-crunch',
-                'price' => 15.00,
-                'description' => 'Crunchy chocolate snack.',
-                'image_url' => 'https://images.pexels.com/photos/4109948/pexels-photo-4109948.jpeg',
             ],
             [
+                'name' => 'Chitato Lite',
+                'price' => 20000,
+                'description' => 'Chitato versi lite dengan kalori lebih rendah',
                 'category_id' => $snackCategory->id,
-                'name' => 'Cheese Ball',
-                'slug' => 'cheese-ball',
-                'price' => 12.00,
-                'description' => 'Delicious cheese-flavored snack.',
-                'image_url' => 'https://images.pexels.com/photos/1615198/pexels-photo-1615198.jpeg',
             ],
             [
-                'category_id' => $drinkCategory->id,
-                'name' => 'Iced Coffee',
-                'slug' => 'iced-coffee',
-                'price' => 20.00,
-                'description' => 'Cold coffee with ice cubes.',
-                'image_url' => 'https://images.pexels.com/photos/3779094/pexels-photo-3779094.jpeg',
+                'name' => 'Maxicorn Barbecue',
+                'price' => 22000,
+                'description' => 'Snack corn dengan rasa barbecue',
+                'category_id' => $snackCategory->id,
             ],
             [
-                'category_id' => $drinkCategory->id,
-                'name' => 'Milk Tea',
-                'slug' => 'milk-tea',
-                'price' => 18.00,
-                'description' => 'Sweet and creamy milk tea.',
-                'image_url' => 'https://images.pexels.com/photos/4113833/pexels-photo-4113833.jpeg',
+                'name' => 'Chitato Rumput Laut',
+                'price' => 25000,
+                'description' => 'Snack corn dengan rasa rumput laut',
+                'category_id' => $snackCategory->id,
             ],
+            [
+                'name' => 'Happytos Jagung Bakar',
+                'price' => 21000,
+                'description' => 'Snack corn dengan rasa jagung bakar',
+                'category_id' => $snackCategory->id,
+            ]
         ];
 
-        foreach ($products as $productData) {
-            $product = Product::create($productData);
+        $allProducts = array_merge( $snackProducts);
 
-            if ($product->category_id === $drinkCategory->id) {
-                $product->customizationOptions()->attach([
-                    $sizeOption->id,
-                    $sugarOption->id,
-                    $toppingOption->id,
-                    // $sizeLarge->id,
-                ]);
-            } else {
-                $product->customizationOptions()->attach([
-                    $toppingOption->id,
-                ]);
-            }
+        foreach ($allProducts as $product) {
+            Product::firstOrCreate(
+                ['slug' => Str::slug($product['name'])],
+                array_merge($product, [
+                    'slug' => Str::slug($product['name']),
+                ])
+            );
         }
+
+        $this->command->info('✅ All food and drink products seeded successfully!');
+        $this->command->info('Products: ' . Product::count());
     }
 }

@@ -7,10 +7,18 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "codeat3/blade-google-material-design-icons": "^1.20",
+        "codeat3/blade-iconpark": "^1.7",
+        "codeat3/blade-rpg-awesome-icons": "^1.6",
+        "eduard9969/blade-polaris-icons": "^2.8",
+        "faisal50x/blade-ionicons": "^1.1",
         "filament/filament": "^4.0",
         "laravel/framework": "^11.31",
         "laravel/socialite": "^5.23",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "mallardduck/blade-boxicons": "^2.4",
+        "pxlrbt/filament-excel": "^3.2",
+        "secondnetwork/blade-tabler-icons": "^3.35"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
