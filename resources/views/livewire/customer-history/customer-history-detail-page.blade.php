@@ -10,7 +10,7 @@
         Detail Pesanan #{{ $order->id }}
     </h1>
 
-    <div class="grid grid-cols-1 gap-7">
+    <div class="flex flex-col gap-7">
 
         <x-order.card>
             <x-order.label icon="fa-solid fa-circle-info">Status Pesanan</x-order.label>
@@ -43,33 +43,47 @@
             </p>
         </x-order.card>
 
-        <x-order.card>
+        <x-order.card class="flex flex-col gap-3">
 
-            <x-order.label icon="fa-solid fa-clock">Tanggal Pembayaran</x-order.label>
+            <x-order.label icon="fa-solid fa-clock">Status Pembayaran</x-order.label>
 
             @if ($order->paid_at)
-                <p class="text-gray-800 font-semibold" title="{{ $order->paid_at }}">
-                    {{ $order->paid_at->timezone('Asia/Jakarta')->translatedFormat('d M Y • H:i') }}
-                </p>
-
-                <p class="text-xs text-gray-500">
-                    ({{ $order->paid_at->diffForHumans() }})
-                </p>
-
-                <span class="px-3 py-1 text-xs font-semibold rounded-full inline-flex items-center gap-1
-                                        bg-green-100 text-green-700 border border-green-200">
-                    <i class="fa-solid fa-circle-check"></i>
+                <x-order.badge type="paid">
                     Pembayaran Berhasil
-                </span>
+                </x-order.badge>
             @else
-                <span class="px-3 py-1 text-xs font-semibold rounded-full inline-flex items-center gap-1
-                                        bg-gray-200 text-gray-700 border border-gray-300">
-                    <i class="fa-solid fa-clock"></i>
+                <x-order.badge type="unpaid">
                     Belum Dibayar
-                </span>
+                </x-order.badge>
+            @endif
+
+
+            @if ($order->paid_at)
+                <div class="text-sm">
+                    <p class="text-gray-800 font-semibold">
+                        {{ $order->paid_at->timezone('Asia/Jakarta')->translatedFormat('d M Y • H:i') }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        ({{ $order->paid_at->diffForHumans() }})
+                    </p>
+                </div>
+            @endif
+
+
+            @if ($order->payment_status === 'unpaid')
+                <a href="{{ route('customer-history.upload-proof', $order->id) }}" wire:navigate class="w-full bg-[#E13220] text-white text-xs font-semibold py-2 rounded-lg shadow
+                       hover:bg-red-700 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-upload"></i>
+                    Upload Bukti Pembayaran
+                </a>
+
+                <p class="text-xs text-gray-400 text-center italic">
+                    Silakan upload bukti setelah Anda melakukan pembayaran.
+                </p>
             @endif
 
         </x-order.card>
+
 
         <x-order.card>
             <x-order.label icon="fa-solid fa-map">Pickup Location</x-order.label>
@@ -84,17 +98,7 @@
             </a>
         </x-order.card>
 
-        @if ($order->payment_status === 'unpaid')
-            <div class="sm:col-span-2 flex justify-center mt-4">
-                <a href="{{ route('customer-history.upload-proof', $order->id) }}" wire:navigate class="bg-[#E13220] text-white px-6 py-2 rounded-lg font-semibold shadow
-                                           hover:bg-red-700 transition inline-flex items-center gap-2">
 
-                    <i class="fa-solid fa-upload"></i>
-                    Upload Bukti Pembayaran
-
-                </a>
-            </div>
-        @endif
     </div>
 
     <div class="mt-10">

@@ -7,7 +7,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-#[Layout('layouts.customer')] 
+#[Layout('layouts.customer')]
 class UploadPaymentProof extends Component
 {
     use WithFileUploads;
@@ -39,6 +39,7 @@ class UploadPaymentProof extends Component
 
     public function render()
     {
-        return view('livewire.upload-payment-proof');
+        $order = $this->order->load(['items.product']);
+        return view('livewire.upload-payment-proof', compact('order'));
     }
 }
