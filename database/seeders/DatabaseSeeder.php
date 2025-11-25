@@ -3,17 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
 
         User::factory()->create([
             'name' => 'Test User',
@@ -21,6 +16,31 @@ class DatabaseSeeder extends Seeder
             'phone' => '082139102459'
         ]);
 
-        $this->call(ProductSeeder::class);
+        User::firstOrCreate(
+            ['email' => 'admin@mail.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('aDmin567;'),
+                'role' => 'admin',
+                'phone' => '08123456789',
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'stand@mail.com'],
+            [
+                'name' => 'Stand',
+                'password' => bcrypt('stanD567;'),
+                'role' => 'stand_staff',
+                'phone' => '0897654321',
+            ]
+        );
+
+        $this->call([
+            ReportSeeder::class,
+            OrderSeeder::class,
+        ]);
+
+        $this->command->info('✅ All users (admin & stand) created successfully!');
     }
 }
