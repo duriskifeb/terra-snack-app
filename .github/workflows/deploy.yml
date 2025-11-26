@@ -2,50 +2,29 @@ name: Deploy Terrasnack
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  build-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, bcmath, intl, fileinfo
-          tools: composer
-
-      - name: Install Composer Dependencies
-        run: |
-          composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
 
       - name: Build Frontend Assets
         run: |
           npm ci
           npm run build
 
-      - name: Clean Development Files
+      - name: Clean Files
         run: |
-          # Hapus file yang tidak perlu di production
           rm -rf .git .github node_modules tests
-          rm -f package-lock.json composer.lock
-          rm -f vite.config.js tailwind.config.js postcss.config.js phpunit.xml
+          rm -f package-lock.json
+          rm -f vite.config.js tailwind.config.js postcss.config.js
           rm -rf resources/js/ resources/css/
-          rm -rf storage/framework/cache/* storage/framework/views/* storage/logs/*
-          find . -name '*.log' -type f -delete
-          find . -name '*.sqlite' -type f -delete
 
-      - name:  Upload Build Results
+      - name: Upload Without Vendor
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           server: ${{ secrets.CPANEL_HOST }}
@@ -58,11 +37,12 @@ jobs:
             .git/
             .github/
             node_modules/
+            vendor/
             tests/
             *.log
             *.sqlite
 
-      - name: Setup Laravel on Server
+      - name: Composer Install on Server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.CPANEL_HOST }}
@@ -71,22 +51,32 @@ jobs:
           port: 22
           script: |
             cd /home/${{ secrets.CPANEL_USER }}/terrasnack.biz.id/
-            
-            echo "📝 Creating .env file..."
+            composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Setup Laravel
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USER }}
+          key: ${{ secrets.CPANEL_SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/${{ secrets.CPANEL_USER }}/terrasnack.biz.id/
+
             cat > .env << 'EOL'
             APP_NAME="Terrasnack"
             APP_ENV=production
             APP_KEY=${{ secrets.APP_KEY }}
             APP_DEBUG=false
             APP_URL=${{ secrets.APP_URL }}
-            
+
             DB_CONNECTION=mysql
             DB_HOST=127.0.0.1
             DB_PORT=3306
             DB_DATABASE=${{ secrets.DB_DATABASE }}
             DB_USERNAME=${{ secrets.DB_USERNAME }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            
+
             BROADCAST_DRIVER=log
             CACHE_DRIVER=file
             FILESYSTEM_DISK=local
@@ -95,11 +85,8 @@ jobs:
             SESSION_LIFETIME=120
             EOL
 
-            echo "🔄 Running Laravel commands..."
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
             php artisan storage:link
             php artisan migrate --force
-            
-            echo "🎉 Deployment completed!"
