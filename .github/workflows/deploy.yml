@@ -1,46 +1,51 @@
-name: 🚀 Deploy Terrasnack to cPanel
+name: Deploy Terrasnack
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🐘 Setup PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: '8.2'
           extensions: mbstring, bcmath, intl, fileinfo
           tools: composer
 
-      - name: 📦 Install PHP dependencies
+      - name: Install Composer Dependencies
         run: |
           composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
-      - name: 📦 Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: '20'
+          cache: 'npm'
 
-      - name: 🎨 Build Frontend Assets
+      - name: Build Frontend Assets
         run: |
           npm ci
           npm run build
 
-      - name: 🧹 Clean files before upload
+      - name: Clean Development Files
         run: |
+          # Hapus file yang tidak perlu di production
           rm -rf .git .github node_modules tests
+          rm -f package-lock.json composer.lock
+          rm -f vite.config.js tailwind.config.js postcss.config.js phpunit.xml
+          rm -rf resources/js/ resources/css/
+          rm -rf storage/framework/cache/* storage/framework/views/* storage/logs/*
           find . -name '*.log' -type f -delete
-          find . -name '.env.example' -type f -delete
+          find . -name '*.sqlite' -type f -delete
 
-      - name: 📤 Upload Files to cPanel
+      - name:  Upload Build Results
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           server: ${{ secrets.CPANEL_HOST }}
@@ -49,49 +54,15 @@ jobs:
           port: 22
           local_path: ./
           remote_path: /home/${{ secrets.CPANEL_USER }}/terrasnack.biz.id/
-          sftp_only: true
+          exclude: |
+            .git/
+            .github/
+            node_modules/
+            tests/
+            *.log
+            *.sqlite
 
-      - name: ⚙️ Create .env on Server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.CPANEL_HOST }}
-          username: ${{ secrets.CPANEL_USER }}
-          key: ${{ secrets.CPANEL_SSH_KEY }}
-          port: 22
-          script: |
-            # Create .env file
-            cat > /home/${{ secrets.CPANEL_USER }}/terrasnack.biz.id/.env << 'EOL'
-            APP_NAME="Terrasnack"
-            APP_ENV=${{ secrets.APP_ENV }}
-            APP_KEY=${{ secrets.APP_KEY }}
-            APP_DEBUG=${{ secrets.APP_DEBUG }}
-            APP_URL=${{ secrets.APP_URL }}
-
-            LOG_CHANNEL=stack
-            LOG_DEPRECATIONS_CHANNEL=null
-            LOG_LEVEL=debug
-
-            DB_CONNECTION=mysql
-            DB_HOST=127.0.0.1
-            DB_PORT=3306
-            DB_DATABASE=${{ secrets.DB_DATABASE }}
-            DB_USERNAME=${{ secrets.DB_USERNAME }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-
-            BROADCAST_DRIVER=log
-            CACHE_DRIVER=file
-            FILESYSTEM_DISK=local
-            QUEUE_CONNECTION=sync
-            SESSION_DRIVER=file
-            SESSION_LIFETIME=120
-
-            MEMCACHED_HOST=127.0.0.1
-            REDIS_HOST=127.0.0.1
-            REDIS_PASSWORD=null
-            REDIS_PORT=6379
-            EOL
-
-      - name: 🔧 Run Laravel Commands
+      - name: Setup Laravel on Server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.CPANEL_HOST }}
@@ -100,31 +71,35 @@ jobs:
           port: 22
           script: |
             cd /home/${{ secrets.CPANEL_USER }}/terrasnack.biz.id/
+            
+            echo "📝 Creating .env file..."
+            cat > .env << 'EOL'
+            APP_NAME="Terrasnack"
+            APP_ENV=production
+            APP_KEY=${{ secrets.APP_KEY }}
+            APP_DEBUG=false
+            APP_URL=${{ secrets.APP_URL }}
+            
+            DB_CONNECTION=mysql
+            DB_HOST=127.0.0.1
+            DB_PORT=3306
+            DB_DATABASE=${{ secrets.DB_DATABASE }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            
+            BROADCAST_DRIVER=log
+            CACHE_DRIVER=file
+            FILESYSTEM_DISK=local
+            QUEUE_CONNECTION=sync
+            SESSION_DRIVER=file
+            SESSION_LIFETIME=120
+            EOL
 
-            echo "📦 Installing composer dependencies on server..."
-            composer install --no-dev --optimize-autoloader
-
-            echo "🔄 Putting application in maintenance mode..."
-            php artisan down || true
-
-            echo "🗃️ Running database migrations..."
-            php artisan migrate --force
-
-            echo "🧹 Clearing all caches..."
-            php artisan optimize:clear
-
-            echo "🎨 Optimizing Filament..."
-            php artisan filament:optimize-clear
-
-            echo "⚡ Caching configurations..."
+            echo "🔄 Running Laravel commands..."
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-
-            echo "📁 Creating storage link..."
             php artisan storage:link
-
-            echo "✅ Bringing application back online..."
-            php artisan up
-
-            echo "🎉 Deployment completed successfully!"
+            php artisan migrate --force
+            
+            echo "🎉 Deployment completed!"
