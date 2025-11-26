@@ -1,131 +1,130 @@
-name: Build & Deploy Laravel to cPanel
+name: 🚀 Deploy Terrasnack to cPanel
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # --- Clone repo ---
-      - name: Checkout code
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      # --- Setup PHP & install Composer deps ---
-      - name: Setup PHP
+      - name: 🐘 Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-          extensions: mbstring, bcmath, intl
+          php-version: "8.2"
+          extensions: mbstring, bcmath, intl, fileinfo
           tools: composer
 
-      - name: Install PHP dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+      - name: 📦 Install PHP dependencies
+        run: |
+          composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
-      # --- Setup Node.js & build assets ---
-      - name: Setup Node.js
+      - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
+          cache: "npm"
 
-      - name: Install Node dependencies & Build
+      - name: 🎨 Build Frontend Assets
         run: |
-            rm -f package-lock.json
-            npm install
-            npm run build
+          npm ci
+          npm run build
 
-      - name: Remove excluded folders/files before deploy
+      - name: 🧹 Clean files before upload
         run: |
-         rm -rf .git node_modules tests
-         find . -name '*.log' -type f -delete
+          rm -rf .git .github node_modules tests
+          find . -name '*.log' -type f -delete
+          find . -name '.env.example' -type f -delete
 
-      - name: SFTP Deploy Laravel Core
+      - name: 📤 Upload Files to cPanel
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          server: ${{ secrets.CPANEL_FTP_HOST }}
-          username: ${{ secrets.CPANEL_FTP_USER }}
+          server: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USER }}
           password: ${{ secrets.CPANEL_FTP_PASS }}
           port: 22
           local_path: ./
-          remote_path: /home/brownita/laravel
+          remote_path: /home/${{ secrets.CPANEL_USER }}/terrasnack.biz.id/
+          sftp_only: true
 
-      - name: SFTP Deploy Laravel Public
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          server: ${{ secrets.CPANEL_FTP_HOST }}
-          username: ${{ secrets.CPANEL_FTP_USER }}
-          password: ${{ secrets.CPANEL_FTP_PASS }}
-          port: 22
-          local_path: ./public/*
-          remote_path: /home/brownita/public_html
-          
-      # # # --- Deploy semua file ke cPanel ---
-      # - name: SFTP Deploy
-      #   uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-      #   with:
-      #     server: ${{ secrets.CPANEL_FTP_HOST }}      
-      #     username: ${{ secrets.CPANEL_FTP_USER }}     
-      #     password: ${{ secrets.CPANEL_FTP_PASS }}    
-      #     port: 22                                  
-      #     local_path: ./                            
-      #     remote_path: /home/brownita/public_html/   
-    
-      # --- Generate .env di server ---
-      - name: Create .env on Server
+      - name: ⚙️ Create .env on Server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
           key: ${{ secrets.CPANEL_SSH_KEY }}
-          port: ${{ secrets.CPANEL_PORT }}
+          port: 22
           script: |
-            cat > /home/${{ secrets.CPANEL_USER }}/laravel/.env <<EOL
-            APP_NAME=Brownita
+            # Create .env file
+            cat > /home/${{ secrets.CPANEL_USER }}/terrasnack.biz.id/.env << 'EOL'
+            APP_NAME="Terrasnack"
             APP_ENV=${{ secrets.APP_ENV }}
             APP_KEY=${{ secrets.APP_KEY }}
             APP_DEBUG=${{ secrets.APP_DEBUG }}
             APP_URL=${{ secrets.APP_URL }}
-        
+
             LOG_CHANNEL=stack
             LOG_DEPRECATIONS_CHANNEL=null
             LOG_LEVEL=debug
-        
+
             DB_CONNECTION=mysql
-            DB_HOST=${{ secrets.DB_HOST }}
+            DB_HOST=127.0.0.1
             DB_PORT=3306
             DB_DATABASE=${{ secrets.DB_DATABASE }}
             DB_USERNAME=${{ secrets.DB_USERNAME }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-        
+
             BROADCAST_DRIVER=log
             CACHE_DRIVER=file
             FILESYSTEM_DISK=local
             QUEUE_CONNECTION=sync
             SESSION_DRIVER=file
             SESSION_LIFETIME=120
-        
+
             MEMCACHED_HOST=127.0.0.1
-        
             REDIS_HOST=127.0.0.1
             REDIS_PASSWORD=null
             REDIS_PORT=6379
             EOL
 
-
-      # --- Laravel optimize & migrate ---
-      - name: Run Laravel Commands on Server
+      - name: 🔧 Run Laravel Commands
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
           key: ${{ secrets.CPANEL_SSH_KEY }}
-          port: ${{ secrets.CPANEL_PORT }}
+          port: 22
           script: |
-            cd /home/${{ secrets.CPANEL_USER }}/laravel/
+            cd /home/${{ secrets.CPANEL_USER }}/terrasnack.biz.id/
+
+            echo "📦 Installing composer dependencies on server..."
+            composer install --no-dev --optimize-autoloader
+
+            echo "🔄 Putting application in maintenance mode..."
+            php artisan down || true
+
+            echo "🗃️ Running database migrations..."
             php artisan migrate --force
+
+            echo "🧹 Clearing all caches..."
+            php artisan optimize:clear
+
+            echo "🎨 Optimizing Filament..."
+            php artisan filament:optimize-clear
+
+            echo "⚡ Caching configurations..."
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
+
+            echo "📁 Creating storage link..."
+            php artisan storage:link
+
+            echo "✅ Bringing application back online..."
+            php artisan up
+
+            echo "🎉 Deployment completed successfully!"
