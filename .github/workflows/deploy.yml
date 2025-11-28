@@ -59,7 +59,7 @@ jobs:
           host: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
           key: ${{ secrets.CPANEL_SSH_KEY }}
-          port: 64000
+          port: 22
           script: |
             cd /home/${{ secrets.CPANEL_USER }}/public_html
             
