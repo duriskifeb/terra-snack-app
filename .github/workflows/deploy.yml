@@ -87,5 +87,5 @@ jobs:
             php artisan view:cache
             php artisan storage:link
 
-     
+           echo "kontol"
             
