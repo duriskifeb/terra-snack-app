@@ -51,7 +51,7 @@ jobs:
           local_path: ./public/
           remote_path: /home/${{ secrets.CPANEL_USER }}/public_html
 
-      - name: SSH: Composer Install
+      - name: SSH:Composer Install
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.CPANEL_HOST }}
