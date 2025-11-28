@@ -30,7 +30,7 @@ jobs:
           server: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
           password: ${{ secrets.CPANEL_FTP_PASS }}
-          port: 22
+          port: 64000
           local_path: ./
           remote_path: /home/${{ secrets.CPANEL_USER }}/public_html
           exclude: |
