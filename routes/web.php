@@ -10,10 +10,17 @@ use App\Livewire\UploadPaymentProof;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('products.list');
+    }
+
     return view('welcome');
 });
 
+
 Route::middleware(['auth', 'customer'])->group(function () {
+
+
     Route::get('/cart', CartPage::class)->name('cart');
     Route::get('/products', ProductList::class)->name('products.list');
     Route::get('/products/{product}/customize', ProductCustomize::class)->name('product.customize');
