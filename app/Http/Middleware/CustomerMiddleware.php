@@ -15,8 +15,12 @@ class CustomerMiddleware
      */
     public function handle($request, Closure $next)
     {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
         if (auth()->user()->role !== 'customer') {
-            abort(403, 'Unauthorized.');
+            return redirect()->route('products.list');
         }
 
         return $next($request);

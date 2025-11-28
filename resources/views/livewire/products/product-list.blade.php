@@ -27,7 +27,7 @@
                     <livewire:products.product-item :product="$product" :key="$product->id" />
                 </div>
             @empty
-                <span>Empty</span>
+                <p class="col-span-2 text-center text-gray-500">Tidak ada produk</p>
             @endforelse
         @else
             <p class="col-span-2 text-center text-gray-500">Tidak ada produk di kategori ini.</p>
