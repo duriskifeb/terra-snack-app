@@ -17,32 +17,41 @@ jobs:
           npm ci
           npm run build
 
-      - name: Clean Files
+      - name: Clean unnecessary files
         run: |
           rm -rf .git .github node_modules tests
-          rm -f package-lock.json
-          rm -f vite.config.js tailwind.config.js postcss.config.js
-          rm -rf resources/js/ resources/css/
+          rm -f package-lock.json vite.config.js tailwind.config.js postcss.config.js
 
-      - name: Upload Without Vendor
+      - name: Upload Laravel Core (outside public_html)
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           server: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
           password: ${{ secrets.CPANEL_FTP_PASS }}
           port: 64000
-          local_path: ./
-          remote_path: /home/${{ secrets.CPANEL_USER }}/public_html
+          local_path: ./            # Root of Laravel project
+          remote_path: /home/${{ secrets.CPANEL_USER }}/laravel-app
           exclude: |
-            .git/
-            .github/
+            public/
             node_modules/
             vendor/
+            .git/
+            .github/
             tests/
             *.log
             *.sqlite
 
-      - name: Composer Install on Server
+      - name: Upload Public Folder to public_html
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USER }}
+          password: ${{ secrets.CPANEL_FTP_PASS }}
+          port: 64000
+          local_path: ./public/
+          remote_path: /home/${{ secrets.CPANEL_USER }}/public_html
+
+      - name: SSH: Composer Install
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.CPANEL_HOST }}
@@ -50,10 +59,10 @@ jobs:
           key: ${{ secrets.CPANEL_SSH_KEY }}
           port: 64000
           script: |
-            cd /home/${{ secrets.CPANEL_USER }}/public_html
+            cd /home/${{ secrets.CPANEL_USER }}/laravel-app
             composer install --no-dev --optimize-autoloader --no-interaction
 
-      - name: Setup Laravel
+      - name: SSH: Setup Laravel & Patch index.php
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.CPANEL_HOST }}
@@ -61,9 +70,9 @@ jobs:
           key: ${{ secrets.CPANEL_SSH_KEY }}
           port: 64000
           script: |
-            cd /home/${{ secrets.CPANEL_USER }}/public_html
-            
-            # Create .env using echo commands (lebih aman di YAML)
+            cd /home/${{ secrets.CPANEL_USER }}/laravel-app
+
+            # Create .env file
             echo "APP_NAME=\"Terrasnack\"" > .env
             echo "APP_ENV=production" >> .env
             echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env
@@ -87,7 +96,9 @@ jobs:
             php artisan view:cache
             php artisan storage:link
 
-            echo "hello"
+            # Patch public_html/index.php to point to laravel-app
+            INDEX_FILE="/home/${{ secrets.CPANEL_USER }}/public_html/index.php"
+            sed -i "s|require __DIR__.'/../vendor/autoload.php';|require __DIR__.'/../laravel-app/vendor/autoload.php';|" $INDEX_FILE
+            sed -i "s|\$app = require_once __DIR__.'/../bootstrap/app.php';|\$app = require_once __DIR__.'/../laravel-app/bootstrap/app.php';|" $INDEX_FILE
 
-         
-            
+            echo "Laravel setup complete and index.php patched"
