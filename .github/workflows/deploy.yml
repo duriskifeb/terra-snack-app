@@ -62,7 +62,7 @@ jobs:
             cd /home/${{ secrets.CPANEL_USER }}/laravel-app
             composer install --no-dev --optimize-autoloader --no-interaction
 
-      - name: SSH: Setup Laravel & Patch index.php
+      - name: SSH:Setup Laravel & Patch index.php
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.CPANEL_HOST }}
