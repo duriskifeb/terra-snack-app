@@ -50,7 +50,7 @@ jobs:
           key: ${{ secrets.CPANEL_SSH_KEY }}
           port: 22
           script: |
-            cd /home/${{ secrets.CPANEL_USER }}/terrasnack.biz.id/
+            cd /home/${{ secrets.CPANEL_USER }}/public_html
             composer install --no-dev --optimize-autoloader --no-interaction
 
       - name: Setup Laravel
@@ -61,7 +61,7 @@ jobs:
           key: ${{ secrets.CPANEL_SSH_KEY }}
           port: 22
           script: |
-            cd /home/${{ secrets.CPANEL_USER }}/terrasnack.biz.id/
+            cd /home/${{ secrets.CPANEL_USER }}/public_html
             
             # Create .env using echo commands (lebih aman di YAML)
             echo "APP_NAME=\"Terrasnack\"" > .env
