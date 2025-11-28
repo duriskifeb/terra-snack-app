@@ -32,7 +32,7 @@ jobs:
           password: ${{ secrets.CPANEL_FTP_PASS }}
           port: 22
           local_path: ./
-          remote_path: /home/${{ secrets.CPANEL_USER }}/public_html/
+          remote_path: /home/${{ secrets.CPANEL_USER }}/public_html
           exclude: |
             .git/
             .github/
