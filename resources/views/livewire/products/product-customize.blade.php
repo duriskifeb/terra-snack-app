@@ -29,14 +29,14 @@
                                         <span class="text-sm">Gratis</span>
                                     @endif
 
-                                    <input type="radio" class="sr-only peer" wire:model.live="selectedOptions.{{ $group->id }}"
+                                    <input type="radio" class="sr-only peer" wire:model.live="selectedOptions.group_{{ $group->id }}"
                                         value="{{ $value->id }}">
                                     <span
                                         class="w-4 h-4 border border-gray-400 rounded-full peer-checked:bg-red-600 peer-checked:border-red-600"></span>
                                 </div>
                             </div>
 
-                            @if (!empty($value->details) && in_array($value->id, (array) ($selectedOptions[$group->id] ?? [])))
+                            @if (!empty($value->details) && in_array($value->id, (array) ($selectedOptions['group_' . $group->id] ?? [])))
                                 <ul class="text-sm text-gray-500 mt-1 ml-4 list-disc">
                                     @foreach ($value->details as $key => $detail)
                                         <li>{{ $key }}: {{ $detail }}</li>

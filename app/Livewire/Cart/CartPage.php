@@ -20,9 +20,9 @@ class CartPage extends Component
 
     public function mount()
     {
-        $user = User::find(1);
+        $user = Auth::user();
         if (!$user) {
-            abort(404, 'Test user (ID 1) not found. Please run tinker to create User ID 1 and its cart.');
+            return redirect()->route('login');
         }
         $this->cart = $user->cart()->firstOrCreate(
             ['user_id' => $user->id]

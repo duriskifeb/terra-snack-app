@@ -51,7 +51,7 @@
                         </div>
 
                         <div class="flex flex-col justify-between items-end">
-                            <img src="{{ $item->product->image_url ?? asset('assets/snack-placeholder.png') }}"
+                            <img src="{{ $item->product->image_url ? (str_starts_with($item->product->image_url, 'http') ? $item->product->image_url : Storage::url($item->product->image_url)) : asset('assets/snack-placeholder.png') }}"
                                 class="w-20 h-24 object-cover rounded-lg shadow-sm">
 
                             <div class="text-sm font-semibold text-gray-600 mt-2">

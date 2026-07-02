@@ -1,6 +1,6 @@
 <div class="relative duration-300 cursor-pointer hover:bg-[#E13220] bg-white p-4 rounded-xl shadow-lg flex justify-center flex-col items-center overflow-visible group">
 
-    <img src="{{ $product->image_url }}"
+    <img src="{{ $product->image_url ? (str_starts_with($product->image_url, 'http') ? $product->image_url : Storage::url($product->image_url)) : asset('assets/snack-placeholder.png') }}"
          alt="{{ $product->name }}"
          class="w-40 h-40 object-contain -mt-24 z-10 drop-shadow-lg">
 

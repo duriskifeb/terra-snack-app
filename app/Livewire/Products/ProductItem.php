@@ -39,9 +39,10 @@ class ProductItem extends Component
                 ->first();
 
             if ($cartItem) {
-                $cartItem->increment('quantity');
-                $newSubtotal = $cartItem->quantity * $cartItem->unit_price;
-                $cartItem->update(['subtotal' => $newSubtotal]);
+                // Increment in memory and DB
+                $cartItem->quantity += 1;
+                $cartItem->subtotal = $cartItem->quantity * $cartItem->unit_price;
+                $cartItem->save();
 
             } else {
                 $cart->items()->create([
@@ -52,7 +53,8 @@ class ProductItem extends Component
                 ]);
             }
 
-            $this->dispatch('productAdded', 'Barang ditambahkan ke keranjang!');
+            $this->dispatch('show-success', 'Barang ditambahkan ke keranjang!');
+            // return redirect()->route('cart'); // Dihapus sesuai permintaan
 
         } catch (\Exception $e) {
             Log::error('Error adding to cart: ' . $e->getMessage());

@@ -31,7 +31,7 @@ class Product extends Model
 
     public function customizationOptions(): BelongsToMany
     {
-        return $this->belongsToMany(CustomizationOption::class, 'product_customizable_options');
+        return $this->belongsToMany(CustomizationOption::class, 'product_customization_options');
 
     }
 

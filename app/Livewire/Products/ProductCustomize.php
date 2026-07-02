@@ -39,6 +39,7 @@ class ProductCustomize extends Component
             
             if ($this->cartItem && $this->cartItem->product_id === $this->product->id) {
                 $this->quantity = $this->cartItem->quantity;
+                $this->notes = $this->cartItem->notes ?? '';
                 
                 foreach ($this->customizationGroups as $group) {
                     $selectedIdsInGroup = $this->cartItem->optionValues
@@ -46,10 +47,11 @@ class ProductCustomize extends Component
                         ->pluck('id')
                         ->all();
 
+                    $key = 'group_' . $group->id;
                     if ($group->type === 'radio') {
-                        $this->selectedOptions[$group->id] = $selectedIdsInGroup[0] ?? null;
+                        $this->selectedOptions[$key] = $selectedIdsInGroup[0] ?? null;
                     } else {
-                        $this->selectedOptions[$group->id] = $selectedIdsInGroup;
+                        $this->selectedOptions[$key] = $selectedIdsInGroup;
                     }
                 }
             } else {
@@ -67,10 +69,11 @@ class ProductCustomize extends Component
     public function initializeSelectedOptions()
     {
         foreach ($this->customizationGroups as $group) {
+            $key = 'group_' . $group->id;
             if ($group->type === 'radio') {
-                $this->selectedOptions[$group->id] = null; 
+                $this->selectedOptions[$key] = null; 
             } else {
-                $this->selectedOptions[$group->id] = []; 
+                $this->selectedOptions[$key] = []; 
             }
         }
     }
@@ -145,12 +148,19 @@ class ProductCustomize extends Component
         $unitPrice = $this->product->price + $optionsPrice;
         $subtotal = $unitPrice * $this->quantity;
 
+        file_put_contents(storage_path('logs/debug_cart.txt'), json_encode([
+            'selectedOptions' => $this->selectedOptions,
+            'selectedOptionIds' => $selectedOptionIds,
+            'cartItemId' => $this->cartItemId
+        ]) . PHP_EOL, FILE_APPEND);
+
         try {
             if ($this->cartItem) {
                 $this->cartItem->update([
                     'quantity'   => $this->quantity,
                     'unit_price' => $unitPrice,
                     'subtotal'   => $subtotal,
+                    'notes'      => $this->notes,
                 ]);
                 
                 $this->cartItem->optionValues()->sync($selectedOptionIds);
@@ -179,13 +189,19 @@ class ProductCustomize extends Component
                         'quantity'   => $this->quantity,
                         'unit_price' => $unitPrice,
                         'subtotal'   => $subtotal,
+                        'notes'      => $this->notes,
                     ]);
                     
                     $newItem->optionValues()->attach($selectedOptionIds);
                 }
             }
             $this->dispatch('show-success', 'Barang berhasil disimpan ke keranjang!');            
-            return redirect()->route('cart');
+            
+            if ($this->cartItemId) {
+                return redirect()->route('cart');
+            } else {
+                return redirect()->route('products.list');
+            }
 
         } catch (\Exception $e) {
             Log::error('Error saving item to cart: ' . $e->getMessage());
@@ -196,10 +212,11 @@ class ProductCustomize extends Component
     public function resetTopping($groupId)
     {
         $group = $this->customizationGroups->firstWhere('id', $groupId);
+        $key = 'group_' . $groupId;
         if ($group && $group->type === 'radio') {
-            $this->selectedOptions[$groupId] = null;
+            $this->selectedOptions[$key] = null;
         } else {
-            $this->selectedOptions[$groupId] = [];
+            $this->selectedOptions[$key] = [];
         }
         $this->calculatePrice();
     }

@@ -44,6 +44,7 @@ class CheckoutPage extends Component
                 'quantity' => $item->quantity,
                 'unit_price' => $item->unit_price,
                 'subtotal' => $item->subtotal,
+                'notes' => $item->notes,
             ]);
 
             $orderItem->optionValues()->attach($item->optionValues->pluck('id'));

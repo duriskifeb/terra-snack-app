@@ -5,7 +5,7 @@
     </button>
 
     @if ($cartItem->product)
-        <img src="{{ $cartItem->product->image_url ?? 'https://placehold.co/300x300/e2e8f0/e2e8f0?text=Image' }}"
+        <img src="{{ $cartItem->product->image_url ? (str_starts_with($cartItem->product->image_url, 'http') ? $cartItem->product->image_url : Storage::url($cartItem->product->image_url)) : 'https://placehold.co/300x300/e2e8f0/e2e8f0?text=Image' }}"
             alt="{{ $cartItem->product->name ?? 'Produk' }}" class="w-full h-24 object-contain mb-3" 
     @endif
 
@@ -22,6 +22,11 @@
                 -
             @endif
         </p>
+        @if (!empty($cartItem->notes))
+            <p class="text-xs text-gray-600 italic mt-1">
+                Catatan: {{ $cartItem->notes }}
+            </p>
+        @endif
     </div>
 
     <p class="text-sm font-semibold text-gray-800 mb-4">

@@ -19,7 +19,7 @@ class CustomizationOption extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'product_customizable_options');
+        return $this->belongsToMany(Product::class, 'product_customization_options');
     }
 
     public function optionValues(): HasMany
