@@ -1,17 +1,32 @@
 <?php
 
-// 1. Definisikan jalur folder sementara (karena Vercel read-only)
-$compiledViewPath = '/tmp/storage/framework/views';
+// ============================================================
+// Vercel read-only filesystem fix:
+// Redirect semua writable storage Laravel ke /tmp
+// ============================================================
 
-// 2. Buat folder tersebut secara otomatis jika belum ada di mesin Vercel
-if (!is_dir($compiledViewPath)) {
-    mkdir($compiledViewPath, 0777, true);
+$storagePaths = [
+    '/tmp/storage/framework/views',
+    '/tmp/storage/framework/cache/data',
+    '/tmp/storage/framework/sessions',
+    '/tmp/storage/logs',
+];
+
+foreach ($storagePaths as $path) {
+    if (!is_dir($path)) {
+        mkdir($path, 0777, true);
+    }
 }
 
-// 3. Paksa sistem Laravel untuk merender tampilan (views) ke folder /tmp
-$_ENV['VIEW_COMPILED_PATH'] = $compiledViewPath;
-$_SERVER['VIEW_COMPILED_PATH'] = $compiledViewPath;
-putenv('VIEW_COMPILED_PATH=' . $compiledViewPath);
+// Redirect compiled views ke /tmp
+$_ENV['VIEW_COMPILED_PATH']    = '/tmp/storage/framework/views';
+$_SERVER['VIEW_COMPILED_PATH'] = '/tmp/storage/framework/views';
+putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
 
-// 4. Panggil dan jalankan aplikasi utama Laravel
+// Redirect storage root ke /tmp agar log & cache juga ke sana
+$_ENV['APP_STORAGE']    = '/tmp/storage';
+$_SERVER['APP_STORAGE'] = '/tmp/storage';
+putenv('APP_STORAGE=/tmp/storage');
+
+// Panggil dan jalankan aplikasi utama Laravel
 require __DIR__ . '/../public/index.php';
