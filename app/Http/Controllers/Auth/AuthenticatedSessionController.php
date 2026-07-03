@@ -28,7 +28,18 @@ class AuthenticatedSessionController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Jika sukses login
+            // Redirect berdasarkan role
+            $role = Auth::user()->role;
+
+            if ($role === 'admin') {
+                return redirect('/admin')->with('success', 'Selamat datang, Admin!');
+            }
+
+            if ($role === 'stand_staff') {
+                return redirect('/stand')->with('success', 'Selamat datang, Stand Staff!');
+            }
+
+            // Default: customer
             return redirect()->intended('/products')->with('success', 'Login berhasil! Selamat datang kembali');
         }
 
