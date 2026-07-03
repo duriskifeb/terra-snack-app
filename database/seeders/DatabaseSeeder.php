@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@mail.com'],
             [
                 'name' => 'Admin',
-                'password' => bcrypt('aDmin567;'),
+                'password' => 'aDmin567;',
                 'role' => 'admin',
                 'phone' => '08123456789',
             ]
@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'stand@mail.com'],
             [
                 'name' => 'Stand',
-                'password' => bcrypt('stanD567;'),
+                'password' => 'stanD567;',
                 'role' => 'stand_staff',
                 'phone' => '0897654321',
             ]
