@@ -34,11 +34,9 @@ class StandPanelProvider extends PanelProvider
                 'primary' => Color::Red,
             ])
             ->discoverResources(in: app_path('Filament/Stand/Resources'), for: 'App\Filament\Stand\Resources')
-            ->discoverPages(in: app_path('Filament/Stand/Pages'), for: 'App\Filament\Stand\Pages')
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Stand/Widgets'), for: 'App\Filament\Stand\Widgets')
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
